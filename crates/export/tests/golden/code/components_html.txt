@@ -125,13 +125,15 @@ ul {
 }
 
 .label {
+  width: 80px;
+  height: 16px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   line-height: normal;
   color: #ffffff;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .save {
@@ -169,13 +171,15 @@ ul {
 }
 
 .label-2 {
+  width: 80px;
+  height: 16px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   line-height: normal;
   color: #ffffff;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .chevron {
@@ -219,11 +223,13 @@ ul {
 }
 
 .label-3 {
+  width: 80px;
+  height: 16px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   line-height: normal;
   color: #ffffff;
-  white-space: pre;
+  white-space: pre-wrap;
 }

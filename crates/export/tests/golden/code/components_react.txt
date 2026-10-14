@@ -12,7 +12,7 @@ export default function Checkout() {
       <ButtonPrimary label="Save" icon={<IconHeart className="relative w-[16px] h-[16px] shrink-0" />} showChevron={true} className="relative shrink-0 self-stretch" />
       <button className="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-[#dc2626] rounded-md">
         <IconStar className="relative w-[16px] h-[16px] shrink-0" />
-        <span className="shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre">Delete</span>
+        <span className="w-[80px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Delete</span>
       </button>
     </div>
   );
@@ -80,7 +80,7 @@ export function ButtonPrimary({
   return (
     <button className={`flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-primary rounded-md ${className ?? "relative w-fit"}`}>
       {showIcon && icon}
-      <span className="shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre">{label}</span>
+      <span className="w-[80px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">{label}</span>
       {showChevron && (
         <span className="w-[8px] h-[8px] shrink-0 bg-[#ffffff]" />
       )}
