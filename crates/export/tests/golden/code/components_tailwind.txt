@@ -1,0 +1,51 @@
+=== index.html (html) ===
+<!doctype html>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout</title>
+<!-- Build output.css with: npx @tailwindcss/cli -i styles.css -o output.css -->
+<link rel="stylesheet" href="output.css">
+</head>
+<body>
+  <div class="relative w-[360px] h-[200px] flex flex-col gap-[12px] p-[16px] items-start overflow-hidden bg-[#f1f5f9]">
+    <button class="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-primary rounded-md">
+      <span class="relative w-[16px] h-[16px] shrink-0 overflow-hidden">
+        <svg class="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
+          <path class="fill-[#ffffff]" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z"></path>
+        </svg>
+      </span>
+      <span class="shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre">Pay &quot;now&quot;</span>
+    </button>
+    <button class="relative shrink-0 self-stretch flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-primary rounded-md">
+      <span class="relative w-[16px] h-[16px] shrink-0 overflow-hidden">
+        <svg class="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
+          <path class="fill-[#ffffff]" d="M8 15L2 9A3 3 0 0 1 8 4A3 3 0 0 1 14 9Z"></path>
+        </svg>
+      </span>
+      <span class="shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre">Save</span>
+      <span class="w-[8px] h-[8px] shrink-0 bg-[#ffffff]"></span>
+    </button>
+    <button class="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-[#dc2626] rounded-md">
+      <span class="relative w-[16px] h-[16px] shrink-0 overflow-hidden">
+        <svg class="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
+          <path class="fill-[#ffffff]" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z"></path>
+        </svg>
+      </span>
+      <span class="shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre">Delete</span>
+    </button>
+  </div>
+</body>
+</html>
+=== styles.css (css) ===
+/* tessel export: file="test.tessel.json" node="n_0000000001" revision=7 */
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2563eb;
+  --spacing-3: 12px;
+  --radius-md: 8px;
+}

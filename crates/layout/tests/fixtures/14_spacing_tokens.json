@@ -1,0 +1,68 @@
+{
+  "description": "Gap and padding from spacing tokens.",
+  "tokens": {
+    "spacing": {
+      "space.2": 8,
+      "space.4": 16
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "layout": {
+        "direction": "row",
+        "gap": "{space.2}",
+        "padding": [
+          "{space.4}",
+          "{space.4}",
+          "{space.4}",
+          "{space.4}"
+        ],
+        "width": "hug",
+        "height": "hug"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 30,
+          "height": 30
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 30,
+          "height": 30
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      100,
+      62
+    ],
+    "a": [
+      16,
+      16,
+      30,
+      30
+    ],
+    "b": [
+      54,
+      16,
+      30,
+      30
+    ]
+  }
+}

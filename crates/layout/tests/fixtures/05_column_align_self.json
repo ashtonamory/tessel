@@ -1,0 +1,97 @@
+{
+  "description": "Column centred, with align_self end/start overrides and a fill-width child.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 200,
+      "layout": {
+        "direction": "column",
+        "padding": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "align": "center",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 60,
+          "height": 20,
+          "layout_child": {
+            "align_self": "end"
+          }
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 50,
+          "height": 20,
+          "layout_child": {
+            "align_self": "start"
+          }
+        },
+        {
+          "id": "d",
+          "name": "d",
+          "kind": "rect",
+          "width": 10,
+          "height": 20,
+          "layout_child": {
+            "width": "fill"
+          }
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      200,
+      200
+    ],
+    "a": [
+      80,
+      10,
+      40,
+      20
+    ],
+    "b": [
+      130,
+      30,
+      60,
+      20
+    ],
+    "c": [
+      10,
+      50,
+      50,
+      20
+    ],
+    "d": [
+      10,
+      70,
+      180,
+      20
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "meta": { "title": "Checkout" },
+  "tokens": {
+    "colors": { "color.primary": "#2563eb" },
+    "spacing": { "space.3": 12 },
+    "radii": { "radius.md": 8 }
+  },
+  "components": [
+    { "id": "c_0000000001", "name": "Icon/Star",
+      "root": { "id": "n_0000000101", "name": "Star", "kind": "frame", "width": 16, "height": 16, "children": [
+        { "id": "n_0000000102", "name": "Shape", "kind": "vector", "width": 16, "height": 16,
+          "path": "M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z", "fills": [{ "type": "solid", "color": "#ffffff" }] }
+      ] } },
+    { "id": "c_0000000002", "name": "Icon/Heart",
+      "root": { "id": "n_0000000103", "name": "Heart", "kind": "frame", "width": 16, "height": 16, "children": [
+        { "id": "n_0000000104", "name": "Shape", "kind": "vector", "width": 16, "height": 16,
+          "path": "M8 15L2 9A3 3 0 0 1 8 4A3 3 0 0 1 14 9Z", "fills": [{ "type": "solid", "color": "#ffffff" }] }
+      ] } },
+    { "id": "c_0000000003", "name": "Button/Primary",
+      "props": [
+        { "name": "label", "target": "n_0000000106", "kind": "text" },
+        { "name": "Show icon", "target": "n_0000000107", "kind": "visible" },
+        { "name": "icon", "target": "n_0000000107", "kind": "swap" },
+        { "name": "Show chevron", "target": "n_0000000108", "kind": "visible" }
+      ],
+      "root": { "id": "n_0000000105", "name": "Button", "kind": "frame", "semantic": "button", "width": 120, "height": 40,
+        "fills": [{ "type": "solid", "color": "{color.primary}" }], "corner_radius": "{radius.md}",
+        "layout": { "direction": "row", "gap": 8, "padding": ["{space.3}", 16, "{space.3}", 16], "align": "center",
+          "width": "hug", "height": "hug" },
+        "children": [
+          { "id": "n_0000000107", "name": "Icon", "kind": "instance", "component": "c_0000000001", "width": 16, "height": 16 },
+          { "id": "n_0000000106", "name": "Label", "kind": "text", "content": "Button",
+            "style": { "font_family": "Inter", "font_weight": 600, "font_size": 14 },
+            "fills": [{ "type": "solid", "color": "#ffffff" }] },
+          { "id": "n_0000000108", "name": "Chevron", "kind": "rect", "width": 8, "height": 8, "visible": false,
+            "fills": [{ "type": "solid", "color": "#ffffff" }] }
+        ] } }
+  ],
+  "pages": [{ "id": "p_0000000001", "name": "Page", "children": [
+    { "id": "n_0000000001", "name": "Checkout", "kind": "frame", "x": 0, "y": 0, "width": 360, "height": 200,
+      "fills": [{ "type": "solid", "color": "#f1f5f9" }],
+      "layout": { "direction": "column", "gap": 12, "padding": [16, 16, 16, 16], "width": "fixed", "height": "fixed" },
+      "children": [
+        { "id": "n_0000000002", "name": "Pay", "kind": "instance", "component": "c_0000000003", "width": 120, "height": 40,
+          "overrides": { "n_0000000106": { "type": "text", "content": "Pay \"now\"" } } },
+        { "id": "n_0000000003", "name": "Save", "kind": "instance", "component": "c_0000000003", "width": 120, "height": 40,
+          "layout_child": { "width": "fill" },
+          "overrides": { "n_0000000107": { "type": "swap", "component": "c_0000000002" },
+            "n_0000000108": { "type": "visible", "visible": true },
+            "n_0000000106": { "type": "text", "content": "Save" } } },
+        { "id": "n_0000000004", "name": "Danger", "kind": "instance", "component": "c_0000000003", "width": 120, "height": 40,
+          "overrides": { "n_0000000105": { "type": "fills", "fills": [{ "type": "solid", "color": "#dc2626" }] },
+            "n_0000000106": { "type": "text", "content": "Delete" } } }
+      ] }
+  ] }]
+}

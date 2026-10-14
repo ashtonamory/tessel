@@ -1,0 +1,24 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "tokens": { "spacing": { "space.4": 16 } },
+  "pages": [{ "id": "p_0000000001", "name": "P", "children": [
+    { "id": "n_0000000001", "name": "Stack", "kind": "frame", "x": 100, "y": 100, "width": 200, "height": 200,
+      "fills": [{ "type": "solid", "color": "#f1f5f9" }],
+      "layout": { "direction": "column", "gap": "{space.4}", "padding": ["{space.4}", "{space.4}", "{space.4}", "{space.4}"],
+        "width": "fixed", "height": "hug" },
+      "children": [
+        { "id": "n_0000000002", "name": "A", "kind": "rect", "x": 0, "y": 0, "width": 100, "height": 30,
+          "fills": [{ "type": "solid", "color": "#ef4444" }] },
+        { "id": "n_0000000003", "name": "Row", "kind": "frame", "x": 0, "y": 0, "width": 150, "height": 40,
+          "fills": [{ "type": "solid", "color": "#ffffff" }],
+          "layout": { "direction": "row", "gap": 8, "padding": [4, 4, 4, 4], "justify": "space_between",
+            "width": "fixed", "height": "fixed" },
+          "children": [
+            { "id": "n_0000000004", "name": "B", "kind": "ellipse", "x": 0, "y": 0, "width": 20, "height": 20,
+              "fills": [{ "type": "solid", "color": "#22c55e" }] },
+            { "id": "n_0000000005", "name": "C", "kind": "ellipse", "x": 0, "y": 0, "width": 20, "height": 20,
+              "fills": [{ "type": "solid", "color": "#3b82f6" }] }
+          ] }
+      ] }
+  ] }]
+}

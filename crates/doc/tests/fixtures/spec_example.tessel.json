@@ -1,0 +1,58 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "meta": { "title": "Landing page" },
+  "tokens": {
+    "colors": { "color.bg": "#ffffff", "color.primary": "#2563eb", "color.text": "#0f172a" },
+    "spacing": { "space.2": 8, "space.4": 16, "space.8": 32 },
+    "radii": { "radius.md": 8 },
+    "fonts": { "font.sans": "Inter" }
+  },
+  "styles": [
+    {
+      "id": "s_3j8d0k2m9p",
+      "name": "Heading/H1",
+      "kind": "text",
+      "style": {
+        "font_family": "{font.sans}",
+        "font_weight": 700,
+        "font_size": 48,
+        "line_height": { "percent": 110 }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "p_0q1w2e3r4t",
+      "name": "Home",
+      "background": "#f1f5f9",
+      "children": [
+        {
+          "id": "n_8k2f9q4m1x",
+          "name": "Desktop",
+          "kind": "frame",
+          "x": 0, "y": 0, "width": 1440, "height": 900,
+          "fills": [{ "type": "solid", "color": "{color.bg}" }],
+          "layout": {
+            "direction": "column",
+            "gap": "{space.8}",
+            "padding": ["{space.8}", "{space.8}", "{space.8}", "{space.8}"],
+            "align": "center",
+            "width": "fixed", "height": "hug"
+          },
+          "children": [
+            {
+              "id": "n_5t6y7v8h9r",
+              "name": "Title",
+              "kind": "text",
+              "x": 0, "y": 0, "width": 640, "height": 53,
+              "content": "Design it. Then ship it.",
+              "text_style": "s_3j8d0k2m9p",
+              "fills": [{ "type": "solid", "color": "{color.text}" }],
+              "semantic": "h1"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

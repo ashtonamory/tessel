@@ -1,0 +1,82 @@
+{
+  "description": "Fill children share the remaining main-axis space; fill on the cross axis stretches.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "padding": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 50,
+          "height": 30
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 1,
+          "height": 30,
+          "layout_child": {
+            "width": "fill"
+          }
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 1,
+          "height": 1,
+          "layout_child": {
+            "width": "fill",
+            "height": "fill"
+          }
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      400,
+      100
+    ],
+    "a": [
+      10,
+      10,
+      50,
+      30
+    ],
+    "b": [
+      70,
+      10,
+      155,
+      30
+    ],
+    "c": [
+      235,
+      10,
+      155,
+      80
+    ]
+  }
+}

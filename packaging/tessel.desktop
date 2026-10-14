@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Tessel
+GenericName=Design Tool
+Comment=Design app screens and web pages, then hand them to an AI agent
+Exec=tessel %f
+Icon=tessel
+Terminal=false
+StartupWMClass=tessel
+Categories=Graphics;Design;
+MimeType=application/x-tessel;
+Keywords=design;ui;layout;

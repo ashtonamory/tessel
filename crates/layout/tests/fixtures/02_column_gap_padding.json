@@ -1,0 +1,75 @@
+{
+  "description": "Column with gap and uneven padding, hugging both axes.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "layout": {
+        "direction": "column",
+        "gap": 10,
+        "padding": [
+          5,
+          10,
+          15,
+          20
+        ],
+        "width": "hug",
+        "height": "hug"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 50,
+          "height": 40
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 80,
+          "height": 20
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 30,
+          "height": 30
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      110,
+      130
+    ],
+    "a": [
+      20,
+      5,
+      50,
+      40
+    ],
+    "b": [
+      20,
+      55,
+      80,
+      20
+    ],
+    "c": [
+      20,
+      85,
+      30,
+      30
+    ]
+  }
+}

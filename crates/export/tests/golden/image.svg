@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="100" viewBox="0 0 220 100">
+  <defs>
+    <clipPath id="c1">
+      <rect x="0" y="0" width="100" height="100" rx="8" ry="8"/>
+    </clipPath>
+    <pattern id="p1" patternUnits="userSpaceOnUse" width="2" height="2">
+      <image x="0" y="0" width="2" height="2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAF0lEQVR4nGP5z8DwnxFIsDAy/AdCBgYANV4FBjbky/sAAAAASUVORK5CYII="/>
+    </pattern>
+  </defs>
+  <g id="n_0000000001" data-name="Gallery">
+    <g id="n_0000000002" data-name="Photo">
+      <g clip-path="url(#c1)">
+        <image x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAF0lEQVR4nGP5z8DwnxFIsDAy/AdCBgYANV4FBjbky/sAAAAASUVORK5CYII="/>
+      </g>
+    </g>
+    <g id="n_0000000003" data-name="Pattern" transform="translate(120 0)">
+      <rect x="0" y="0" width="100" height="100" fill="url(#p1)"/>
+    </g>
+  </g>
+</svg>

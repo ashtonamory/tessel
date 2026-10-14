@@ -1,0 +1,65 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "meta": { "title": "Pricing" },
+  "tokens": {
+    "colors": { "color.primary": "#2563eb", "color.ink": "#0f172a", "color.surface": "#ffffff" },
+    "spacing": { "space.2": 8, "space.4": 16, "space.6": 24 },
+    "radii": { "radius.md": 8, "radius.lg": 16 },
+    "fonts": { "font.sans": "Inter" }
+  },
+  "styles": [
+    { "id": "s_0000000001", "name": "Heading/H1", "kind": "text",
+      "style": { "font_family": "{font.sans}", "font_weight": 700, "font_size": 32, "line_height": { "px": 40 }, "letter_spacing": -0.5 } },
+    { "id": "s_0000000002", "name": "Body", "kind": "text",
+      "style": { "font_family": "{font.sans}", "font_size": 16, "line_height": { "percent": 150 } } },
+    { "id": "s_0000000003", "name": "Card shadow", "kind": "effect",
+      "shadows": [{ "x": 0, "y": 4, "blur": 12, "color": "#0f172a26" }, { "x": 0, "y": 1, "blur": 2, "color": "#0f172a1a" }] }
+  ],
+  "pages": [{ "id": "p_0000000001", "name": "Page", "children": [
+    { "id": "n_0000000001", "name": "Pricing Card", "kind": "frame", "x": 40, "y": 40, "width": 320, "height": 400,
+      "fills": [{ "type": "solid", "color": "{color.surface}" }],
+      "strokes": [{ "type": "solid", "color": "#e2e8f0" }],
+      "corner_radius": "{radius.lg}", "effect_style": "s_0000000003",
+      "layout": { "direction": "column", "gap": "{space.4}",
+        "padding": ["{space.6}", "{space.6}", "{space.6}", "{space.6}"],
+        "align": "stretch", "width": "fixed", "height": "hug" },
+      "children": [
+        { "id": "n_0000000002", "name": "Header", "kind": "frame", "semantic": "header", "width": 272, "height": 40,
+          "layout": { "direction": "row", "gap": "{space.2}", "align": "center", "justify": "space_between",
+            "width": "fixed", "height": "hug" },
+          "layout_child": { "width": "fill" },
+          "children": [
+            { "id": "n_0000000003", "name": "Title", "kind": "text", "content": "Pro", "text_style": "s_0000000001",
+              "semantic": "h1", "fills": [{ "type": "solid", "color": "{color.ink}" }] },
+            { "id": "n_0000000004", "name": "Icon", "kind": "vector", "width": 24, "height": 24,
+              "path": "M12 2L15 9H22L16 14L18 22L12 17L6 22L8 14L2 9H9Z",
+              "fills": [{ "type": "solid", "color": "{color.primary}" }] }
+          ] },
+        { "id": "n_0000000005", "name": "Price", "kind": "text", "content": "$29 / month",
+          "style": { "font_family": "Inter", "font_weight": 600, "font_size": 24 },
+          "fills": [{ "type": "solid", "color": "{color.ink}" }] },
+        { "id": "n_0000000006", "name": "Description", "kind": "text",
+          "content": "Everything in Free, plus\nunlimited projects & <priority> support.",
+          "text_style": "s_0000000002", "sizing": "auto_height", "width": 272, "height": 48,
+          "layout_child": { "width": "fill" }, "fills": [{ "type": "solid", "color": "#475569" }] },
+        { "id": "n_0000000007", "name": "Hero", "kind": "image", "asset": "ASSET", "fit": "crop",
+          "width": 272, "height": 120, "corner_radius": "{radius.md}" },
+        { "id": "n_0000000008", "name": "Buy Button", "kind": "frame", "semantic": "button", "width": 272, "height": 44,
+          "fills": [{ "type": "linear_gradient", "start": [0, 0.5], "end": [1, 0.5],
+            "stops": [{ "offset": 0, "color": "{color.primary}" }, { "offset": 1, "color": "#7c3aed" }] }],
+          "corner_radius": "{radius.md}",
+          "layout": { "direction": "row", "justify": "center", "align": "center", "padding": [12, 16, 12, 16],
+            "width": "fixed", "height": "hug" },
+          "layout_child": { "width": "fill" },
+          "children": [
+            { "id": "n_0000000009", "name": "Label", "kind": "text", "content": "Buy now",
+              "style": { "font_family": "{font.sans}", "font_weight": 600, "font_size": 16, "text_transform": "upper" },
+              "fills": [{ "type": "solid", "color": "#ffffff" }] }
+          ] },
+        { "id": "n_000000000a", "name": "Badge", "kind": "rect", "x": 248, "y": -12, "width": 64, "height": 24,
+          "layout_child": { "position": "absolute" }, "constraints": { "horizontal": "right" },
+          "fills": [{ "type": "solid", "color": "#f59e0b" }], "corner_radius": 12, "opacity": 0.9 },
+        { "id": "n_000000000b", "name": "Hidden note", "kind": "text", "content": "secret", "visible": false }
+      ] }
+  ] }]
+}

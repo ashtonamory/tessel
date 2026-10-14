@@ -1,0 +1,14 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "pages": [{ "id": "p_0000000001", "name": "P", "children": [
+    { "id": "n_0000000001", "name": "Group", "kind": "group", "x": 0, "y": 0, "width": 220, "height": 100,
+      "children": [
+        { "id": "n_0000000002", "name": "Linear", "kind": "rect", "x": 0, "y": 0, "width": 100, "height": 100,
+          "fills": [{ "type": "linear_gradient", "start": [0, 0], "end": [1, 1],
+            "stops": [{ "offset": 0, "color": "#ff0000" }, { "offset": 1, "color": "#0000ff80" }] }] },
+        { "id": "n_0000000003", "name": "Radial", "kind": "ellipse", "x": 120, "y": 0, "width": 100, "height": 50,
+          "fills": [{ "type": "radial_gradient", "center": [0.5, 0.5], "radius": [0.5, 0.5],
+            "stops": [{ "offset": 0, "color": "#ffffff" }, { "offset": 1, "color": "#000000" }] }] }
+      ] }
+  ] }]
+}

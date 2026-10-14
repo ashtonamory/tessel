@@ -1,0 +1,149 @@
+{
+  "description": "Nested auto-layout: hug frames inside a stretch column are stretched; fill inside the stretched row.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 1,
+      "layout": {
+        "direction": "column",
+        "gap": 10,
+        "padding": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "align": "stretch",
+        "width": "fixed",
+        "height": "hug"
+      },
+      "children": [
+        {
+          "id": "row",
+          "name": "row",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1,
+          "layout": {
+            "direction": "row",
+            "gap": 5,
+            "padding": [
+              5,
+              5,
+              5,
+              5
+            ],
+            "width": "hug",
+            "height": "hug"
+          },
+          "children": [
+            {
+              "id": "a",
+              "name": "a",
+              "kind": "rect",
+              "width": 50,
+              "height": 50
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "kind": "rect",
+              "width": 1,
+              "height": 20,
+              "layout_child": {
+                "width": "fill"
+              }
+            }
+          ]
+        },
+        {
+          "id": "fixed",
+          "name": "fixed",
+          "kind": "rect",
+          "width": 100,
+          "height": 30
+        },
+        {
+          "id": "col",
+          "name": "col",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1,
+          "layout": {
+            "direction": "column",
+            "padding": [
+              4,
+              4,
+              4,
+              4
+            ],
+            "width": "hug",
+            "height": "hug"
+          },
+          "children": [
+            {
+              "id": "inner",
+              "name": "inner",
+              "kind": "rect",
+              "width": 20,
+              "height": 20
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      300,
+      158
+    ],
+    "row": [
+      10,
+      10,
+      280,
+      60
+    ],
+    "a": [
+      15,
+      15,
+      50,
+      50
+    ],
+    "b": [
+      70,
+      15,
+      215,
+      20
+    ],
+    "fixed": [
+      10,
+      80,
+      100,
+      30
+    ],
+    "col": [
+      10,
+      120,
+      280,
+      28
+    ],
+    "inner": [
+      14,
+      124,
+      20,
+      20
+    ]
+  }
+}

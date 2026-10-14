@@ -1,0 +1,18 @@
+[package]
+name = "doc"
+description = "tessel document model, canonical file format, commands and history"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+sha2.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+anyhow.workspace = true

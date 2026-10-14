@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40">
+  <defs>
+    <filter id="b1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+  <g id="n_0000000001" data-name="Button">
+    <g transform="translate(0 4)">
+      <rect x="0" y="0" width="120" height="40" rx="10" ry="10" fill="#0f172a" filter="url(#b1)"/>
+    </g>
+    <rect x="0" y="0" width="120" height="40" rx="10" ry="10" fill="#2563eb"/>
+    <rect x="1.5" y="1.5" width="117" height="37" rx="8.5" ry="8.5" fill="none" stroke="#0f172a" stroke-width="3"/>
+  </g>
+</svg>

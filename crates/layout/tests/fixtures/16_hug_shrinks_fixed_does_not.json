@@ -1,0 +1,84 @@
+{
+  "description": "Hug frame in a too-small fixed row keeps its content size; fixed children never shrink (overflow).",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 100,
+      "height": 50,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 60,
+          "height": 20
+        },
+        {
+          "id": "h",
+          "name": "h",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1,
+          "layout": {
+            "direction": "row",
+            "padding": [
+              0,
+              5,
+              0,
+              5
+            ],
+            "width": "hug",
+            "height": "hug"
+          },
+          "children": [
+            {
+              "id": "h1",
+              "name": "h1",
+              "kind": "rect",
+              "width": 40,
+              "height": 20
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      100,
+      50
+    ],
+    "a": [
+      0,
+      0,
+      60,
+      20
+    ],
+    "h": [
+      70,
+      0,
+      50,
+      20
+    ],
+    "h1": [
+      75,
+      0,
+      40,
+      20
+    ]
+  }
+}

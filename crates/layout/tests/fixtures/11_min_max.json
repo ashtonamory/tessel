@@ -1,0 +1,146 @@
+{
+  "description": "Fill children clamped by max_width and min_width; min/max on fixed children in a hug column.",
+  "nodes": [
+    {
+      "id": "row",
+      "name": "row",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 1,
+          "height": 20,
+          "layout_child": {
+            "width": "fill",
+            "max_width": 100
+          }
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 1,
+          "height": 20,
+          "layout_child": {
+            "width": "fill"
+          }
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 50,
+          "height": 20
+        },
+        {
+          "id": "d",
+          "name": "d",
+          "kind": "rect",
+          "width": 1,
+          "height": 20,
+          "layout_child": {
+            "width": "fill",
+            "min_width": 200
+          }
+        }
+      ]
+    },
+    {
+      "id": "col",
+      "name": "col",
+      "kind": "frame",
+      "x": 0,
+      "y": 100,
+      "width": 1,
+      "height": 1,
+      "layout": {
+        "direction": "column",
+        "width": "hug",
+        "height": "hug"
+      },
+      "children": [
+        {
+          "id": "e",
+          "name": "e",
+          "kind": "rect",
+          "width": 30,
+          "height": 30,
+          "layout_child": {
+            "min_width": 60
+          }
+        },
+        {
+          "id": "f",
+          "name": "f",
+          "kind": "rect",
+          "width": 80,
+          "height": 10,
+          "layout_child": {
+            "max_width": 50
+          }
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "row": [
+      0,
+      0,
+      400,
+      100
+    ],
+    "a": [
+      0,
+      0,
+      75,
+      20
+    ],
+    "b": [
+      75,
+      0,
+      75,
+      20
+    ],
+    "c": [
+      150,
+      0,
+      50,
+      20
+    ],
+    "d": [
+      200,
+      0,
+      200,
+      20
+    ],
+    "col": [
+      0,
+      100,
+      60,
+      40
+    ],
+    "e": [
+      0,
+      100,
+      60,
+      30
+    ],
+    "f": [
+      0,
+      130,
+      50,
+      10
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "description": "Row wrap with a cross gap; lines pack at the start and hug the height.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 1,
+      "layout": {
+        "direction": "row",
+        "wrap": true,
+        "gap": 10,
+        "cross_gap": 20,
+        "width": "fixed",
+        "height": "hug"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 60,
+          "height": 30
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 60,
+          "height": 30
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 60,
+          "height": 30
+        },
+        {
+          "id": "d",
+          "name": "d",
+          "kind": "rect",
+          "width": 60,
+          "height": 40
+        },
+        {
+          "id": "e",
+          "name": "e",
+          "kind": "rect",
+          "width": 60,
+          "height": 30
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      200,
+      90
+    ],
+    "a": [
+      0,
+      0,
+      60,
+      30
+    ],
+    "b": [
+      70,
+      0,
+      60,
+      30
+    ],
+    "c": [
+      140,
+      0,
+      60,
+      30
+    ],
+    "d": [
+      0,
+      50,
+      60,
+      40
+    ],
+    "e": [
+      70,
+      50,
+      60,
+      30
+    ]
+  }
+}

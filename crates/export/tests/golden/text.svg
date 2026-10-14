@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="5 6 200 60">
+  <g id="n_0000000001" data-name="Label" transform="translate(5 6)">
+    <text font-family="Inter, sans-serif" font-size="20" font-weight="700" letter-spacing="0.5" text-decoration="underline" fill="#0f172a" text-anchor="middle">
+      <tspan x="100" y="#">Hello &lt;world&gt;</tspan>
+      <tspan x="100" y="#">Second line</tspan>
+    </text>
+  </g>
+</svg>

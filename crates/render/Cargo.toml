@@ -1,0 +1,22 @@
+[package]
+name = "render"
+description = "tessel rendering: document + geometry -> vello Scene"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+doc.workspace = true
+layout.workspace = true
+vello.workspace = true
+wgpu.workspace = true
+parley.workspace = true
+kurbo.workspace = true
+peniko.workspace = true
+tracing.workspace = true
+thiserror.workspace = true
+pollster.workspace = true
+image.workspace = true
+
+

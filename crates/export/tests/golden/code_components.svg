@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="200" viewBox="0 0 360 200">
+  <defs>
+    <clipPath id="c1">
+      <rect x="0" y="0" width="360" height="200"/>
+    </clipPath>
+    <clipPath id="c2">
+      <rect x="0" y="0" width="126.068" height="40.099" rx="8" ry="8" transform="translate(16 16)"/>
+    </clipPath>
+    <clipPath id="c3">
+      <rect x="0" y="0" width="16" height="16" transform="translate(32 28.049)"/>
+    </clipPath>
+    <clipPath id="c4">
+      <rect x="0" y="0" width="328" height="40.099" rx="8" ry="8" transform="translate(16 68.099)"/>
+    </clipPath>
+    <clipPath id="c5">
+      <rect x="0" y="0" width="16" height="16" transform="translate(32 80.148)"/>
+    </clipPath>
+    <clipPath id="c6">
+      <rect x="0" y="0" width="98.021" height="40.099" rx="8" ry="8" transform="translate(16 120.197)"/>
+    </clipPath>
+    <clipPath id="c7">
+      <rect x="0" y="0" width="16" height="16" transform="translate(32 132.247)"/>
+    </clipPath>
+  </defs>
+  <g id="n_0000000001" data-name="Checkout">
+    <rect x="0" y="0" width="360" height="200" fill="#f1f5f9"/>
+    <g clip-path="url(#c1)">
+      <g id="n_0000000002" data-name="Pay">
+        <g transform="translate(16 16)">
+          <rect x="0" y="0" width="126.068" height="40.099" rx="8" ry="8" fill="#2563eb"/>
+        </g>
+        <g clip-path="url(#c2)">
+          <g id="n_0000000002/n_0000000107" data-name="Icon">
+            <g clip-path="url(#c3)">
+              <g id="n_0000000002/n_0000000107/n_0000000102" data-name="Shape" transform="translate(32 28.049)">
+                <path d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z" fill="#ffffff"/>
+              </g>
+            </g>
+          </g>
+          <g id="n_0000000002/n_0000000106" data-name="Label" transform="translate(56 28)">
+            <text font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="start">
+              <tspan x="0" y="12.903">Pay &quot;now&quot;</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="n_0000000003" data-name="Save">
+        <g transform="translate(16 68.099)">
+          <rect x="0" y="0" width="328" height="40.099" rx="8" ry="8" fill="#2563eb"/>
+        </g>
+        <g clip-path="url(#c4)">
+          <g id="n_0000000003/n_0000000107" data-name="Icon">
+            <g clip-path="url(#c5)">
+              <g id="n_0000000003/n_0000000107/n_0000000104" data-name="Shape" transform="translate(32 80.148)">
+                <path d="M8 15L2 9A3 3 0 0 1 8 4A3 3 0 0 1 14 9Z" fill="#ffffff"/>
+              </g>
+            </g>
+          </g>
+          <g id="n_0000000003/n_0000000106" data-name="Label" transform="translate(56 80.099)">
+            <text font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="start">
+              <tspan x="0" y="12.903">Save</tspan>
+            </text>
+          </g>
+          <g id="n_0000000003/n_0000000108" data-name="Chevron" transform="translate(96.696 84.148)">
+            <rect x="0" y="0" width="8" height="8" fill="#ffffff"/>
+          </g>
+        </g>
+      </g>
+      <g id="n_0000000004" data-name="Danger">
+        <g transform="translate(16 120.197)">
+          <rect x="0" y="0" width="98.021" height="40.099" rx="8" ry="8" fill="#dc2626"/>
+        </g>
+        <g clip-path="url(#c6)">
+          <g id="n_0000000004/n_0000000107" data-name="Icon">
+            <g clip-path="url(#c7)">
+              <g id="n_0000000004/n_0000000107/n_0000000102" data-name="Shape" transform="translate(32 132.247)">
+                <path d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z" fill="#ffffff"/>
+              </g>
+            </g>
+          </g>
+          <g id="n_0000000004/n_0000000106" data-name="Label" transform="translate(56 132.197)">
+            <text font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="start">
+              <tspan x="0" y="12.903">Delete</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

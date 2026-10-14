@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-tessel">
+    <comment>Tessel document</comment>
+    <sub-class-of type="application/json"/>
+    <icon name="tessel"/>
+    <glob pattern="*.tessel.json" weight="60"/>
+    <glob pattern="*.design.json" weight="60"/>
+  </mime-type>
+</mime-info>

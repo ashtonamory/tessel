@@ -1,0 +1,28 @@
+=== Screen.tsx (tsx) ===
+// tessel export: file="test.tessel.json" node="n_0000000001" revision=7
+
+export default function Screen() {
+  return (
+    <div className="relative w-full max-w-[400px] min-h-[300px] overflow-hidden [background:linear-gradient(180deg,_#ffffff00_0%,_#0000001a_100%),_#f8fafc] [outline:2px_solid_#cbd5e1] [outline-offset:-2px]">
+      <div className="absolute left-[10px] w-[50px] top-[10px] h-[50px] bg-[#ef4444] rounded-[8px_0_8px_0]" />
+      <div className="absolute right-[10px] w-[60px] bottom-[10px] h-[60px] [outline:2px_solid_#0f172a] [outline-offset:-1px]" />
+      <div className="absolute left-[20px] right-[20px] top-[100px] bottom-[160px] bg-[#3b82f6] border-[3px] border-solid border-[#1e40af]" />
+      <div className="absolute left-[calc(50%_-_20px)] w-[40px] top-[calc(50%_-_20px)] h-[40px] [background:radial-gradient(20px_20px_at_50%_50%,_#fde047_0%,_#f97316_100%)] rounded-full [box-shadow:2px_2px_4px_1px_#00000040]" />
+      <div className="absolute left-0 w-[50%] top-[86.67%] h-[13.33%] bg-[#22c55e]" />
+      <div className="absolute left-[250px] w-[20px] top-[20px] h-[20px] bg-[#a855f7]" />
+      <div className="absolute left-[280px] w-[20px] top-[30px] h-[20px] bg-[#a855f7]" />
+      <div className="absolute left-[30px] w-[100px] top-[165px] h-[30px] opacity-[0.5]">
+        <div className="absolute left-0 w-[30px] top-0 h-[30px] bg-[#64748b]" />
+        <p className="absolute left-[40px] w-[60px] top-[5px] h-[20px] font-['Inter',_sans-serif] text-[12px] font-normal italic leading-[normal] line-through text-[#334155] whitespace-pre-wrap flex flex-col justify-center">{"Hi  there"}</p>
+      </div>
+      <p className="absolute left-[300px] top-[150px] font-['Inter',_sans-serif] text-[16px] font-normal leading-[normal] [background:linear-gradient(108.18deg,_#ef4444_0%,_#3b82f6_100%)] bg-clip-text text-transparent text-right whitespace-pre rotate-[90deg]">Rotated</p>
+      <svg className="absolute left-[100px] w-[100px] top-[200px] h-[0] overflow-visible">
+        <path className="fill-none stroke-[#0f172a] [stroke-width:2]" d="M0 0L100 0" />
+      </svg>
+    </div>
+  );
+}
+=== styles.css (css) ===
+/* tessel export: file="test.tessel.json" node="n_0000000001" revision=7 */
+
+@import "tailwindcss";

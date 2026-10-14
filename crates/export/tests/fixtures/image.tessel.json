@@ -1,0 +1,12 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "pages": [{ "id": "p_0000000001", "name": "P", "children": [
+    { "id": "n_0000000001", "name": "Gallery", "kind": "group", "x": 0, "y": 0, "width": 220, "height": 100,
+      "children": [
+        { "id": "n_0000000002", "name": "Photo", "kind": "image", "x": 0, "y": 0, "width": 100, "height": 100,
+          "asset": "ASSET", "fit": "crop", "corner_radius": 8 },
+        { "id": "n_0000000003", "name": "Pattern", "kind": "rect", "x": 120, "y": 0, "width": 100, "height": 100,
+          "fills": [{ "type": "image", "asset": "ASSET", "fit": "tile" }] }
+      ] }
+  ] }]
+}

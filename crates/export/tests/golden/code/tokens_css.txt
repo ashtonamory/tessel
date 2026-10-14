@@ -1,0 +1,29 @@
+=== tokens.css (css) ===
+/* tessel tokens: "Pricing" */
+
+:root {
+  --color-ink: #0f172a;
+  --color-primary: #2563eb;
+  --color-surface: #ffffff;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --radius-lg: 16px;
+  --radius-md: 8px;
+  --font-sans: 'Inter', sans-serif;
+}
+
+.heading-h1 {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: -0.5px;
+}
+
+.body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 150%;
+}

@@ -1,0 +1,18 @@
+[package]
+name = "layout"
+description = "tessel geometry: auto-layout (taffy), absolute node bounds, text measurement and hit-testing"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+doc.workspace = true
+parley.workspace = true
+taffy.workspace = true
+kurbo.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+serde.workspace = true
+serde_json.workspace = true

@@ -1,0 +1,212 @@
+=== index.html (html) ===
+<!doctype html>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screen</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="screen">
+    <div class="top-left"></div>
+    <div class="bottom-right"></div>
+    <div class="banner"></div>
+    <div class="dot"></div>
+    <div class="scaled"></div>
+    <div class="one"></div>
+    <div class="two"></div>
+    <div class="faded">
+      <div class="square"></div>
+      <p class="note">Hi  there</p>
+    </div>
+    <p class="caption">Rotated</p>
+    <svg class="line">
+      <path class="line-path" d="M0 0L100 0"></path>
+    </svg>
+  </div>
+</body>
+</html>
+=== styles.css (css) ===
+/* tessel export: file="test.tessel.json" node="n_0000000001" revision=7 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+img,
+svg {
+  display: block;
+}
+
+button {
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+.screen {
+  position: relative;
+  width: 400px;
+  height: 300px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff00 0%, #0000001a 100%), #f8fafc;
+  outline: 2px solid #cbd5e1;
+  outline-offset: -2px;
+}
+
+.top-left {
+  position: absolute;
+  left: 10px;
+  width: 50px;
+  top: 10px;
+  height: 50px;
+  background-color: #ef4444;
+  border-radius: 8px 0 8px 0;
+}
+
+.bottom-right {
+  position: absolute;
+  right: 10px;
+  width: 60px;
+  bottom: 10px;
+  height: 60px;
+  outline: 2px solid #0f172a;
+  outline-offset: -1px;
+}
+
+.banner {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 100px;
+  bottom: 160px;
+  background-color: #3b82f6;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #1e40af;
+}
+
+.dot {
+  position: absolute;
+  left: calc(50% - 20px);
+  width: 40px;
+  top: calc(50% - 20px);
+  height: 40px;
+  background: radial-gradient(20px 20px at 50% 50%, #fde047 0%, #f97316 100%);
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px 1px #00000040;
+}
+
+.scaled {
+  position: absolute;
+  left: 0;
+  width: 50%;
+  top: 86.67%;
+  height: 13.33%;
+  background-color: #22c55e;
+}
+
+.one {
+  position: absolute;
+  left: 250px;
+  width: 20px;
+  top: 20px;
+  height: 20px;
+  background-color: #a855f7;
+}
+
+.two {
+  position: absolute;
+  left: 280px;
+  width: 20px;
+  top: 30px;
+  height: 20px;
+  background-color: #a855f7;
+}
+
+.faded {
+  position: absolute;
+  left: 30px;
+  width: 100px;
+  top: 165px;
+  height: 30px;
+  opacity: 0.5;
+}
+
+.square {
+  position: absolute;
+  left: 0;
+  width: 30px;
+  top: 0;
+  height: 30px;
+  background-color: #64748b;
+}
+
+.note {
+  position: absolute;
+  left: 40px;
+  width: 60px;
+  top: 5px;
+  height: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: normal;
+  text-decoration: line-through;
+  color: #334155;
+  white-space: pre-wrap;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.caption {
+  position: absolute;
+  left: 300px;
+  top: 150px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+  background: linear-gradient(108.18deg, #ef4444 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: right;
+  white-space: pre;
+  transform: rotate(90deg);
+}
+
+.line {
+  position: absolute;
+  left: 100px;
+  width: 100px;
+  top: 200px;
+  height: 0;
+  overflow: visible;
+}
+
+.line-path {
+  fill: none;
+  stroke: #0f172a;
+  stroke-width: 2;
+}

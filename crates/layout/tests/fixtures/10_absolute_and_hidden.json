@@ -1,0 +1,88 @@
+{
+  "description": "An absolute child keeps its x/y and takes no space; a hidden child takes no space.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "padding": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 30,
+          "height": 30,
+          "x": 150,
+          "y": 5,
+          "layout_child": {
+            "position": "absolute"
+          }
+        },
+        {
+          "id": "hidden",
+          "name": "hidden",
+          "kind": "rect",
+          "width": 20,
+          "height": 20,
+          "visible": false
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 40,
+          "height": 40
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      200,
+      100
+    ],
+    "a": [
+      10,
+      10,
+      50,
+      50
+    ],
+    "b": [
+      150,
+      5,
+      30,
+      30
+    ],
+    "c": [
+      70,
+      10,
+      40,
+      40
+    ]
+  }
+}

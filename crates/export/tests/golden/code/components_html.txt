@@ -1,0 +1,229 @@
+=== index.html (html) ===
+<!doctype html>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="checkout">
+    <button class="pay">
+      <span class="icon">
+        <svg class="shape">
+          <path class="shape-path" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z"></path>
+        </svg>
+      </span>
+      <span class="label">Pay &quot;now&quot;</span>
+    </button>
+    <button class="save">
+      <span class="icon-2">
+        <svg class="shape-2">
+          <path class="shape-2-path" d="M8 15L2 9A3 3 0 0 1 8 4A3 3 0 0 1 14 9Z"></path>
+        </svg>
+      </span>
+      <span class="label-2">Save</span>
+      <span class="chevron"></span>
+    </button>
+    <button class="danger">
+      <span class="icon-3">
+        <svg class="shape-3">
+          <path class="shape-3-path" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z"></path>
+        </svg>
+      </span>
+      <span class="label-3">Delete</span>
+    </button>
+  </div>
+</body>
+</html>
+=== styles.css (css) ===
+/* tessel export: file="test.tessel.json" node="n_0000000001" revision=7 */
+
+:root {
+  --color-primary: #2563eb;
+  --space-3: 12px;
+  --radius-md: 8px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+img,
+svg {
+  display: block;
+}
+
+button {
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+.checkout {
+  position: relative;
+  width: 360px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  align-items: flex-start;
+  overflow: hidden;
+  background-color: #f1f5f9;
+}
+
+.pay {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: var(--space-3) 16px;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.shape {
+  position: absolute;
+  left: 0;
+  width: 16px;
+  top: 0;
+  height: 16px;
+  overflow: visible;
+}
+
+.shape-path {
+  fill: #ffffff;
+}
+
+.label {
+  flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  color: #ffffff;
+  white-space: pre;
+}
+
+.save {
+  position: relative;
+  flex-shrink: 0;
+  align-self: stretch;
+  display: flex;
+  gap: 8px;
+  padding: var(--space-3) 16px;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.icon-2 {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.shape-2 {
+  position: absolute;
+  left: 0;
+  width: 16px;
+  top: 0;
+  height: 16px;
+  overflow: visible;
+}
+
+.shape-2-path {
+  fill: #ffffff;
+}
+
+.label-2 {
+  flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  color: #ffffff;
+  white-space: pre;
+}
+
+.chevron {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+}
+
+.danger {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: var(--space-3) 16px;
+  align-items: center;
+  overflow: hidden;
+  background-color: #dc2626;
+  border-radius: var(--radius-md);
+}
+
+.icon-3 {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.shape-3 {
+  position: absolute;
+  left: 0;
+  width: 16px;
+  top: 0;
+  height: 16px;
+  overflow: visible;
+}
+
+.shape-3-path {
+  fill: #ffffff;
+}
+
+.label-3 {
+  flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  color: #ffffff;
+  white-space: pre;
+}

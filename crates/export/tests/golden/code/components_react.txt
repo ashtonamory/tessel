@@ -1,0 +1,99 @@
+=== Checkout.tsx (tsx) ===
+// tessel export: file="test.tessel.json" node="n_0000000001" revision=7
+
+import { ButtonPrimary } from "./ButtonPrimary";
+import { IconHeart } from "./IconHeart";
+import { IconStar } from "./IconStar";
+
+export default function Checkout() {
+  return (
+    <div className="relative w-[360px] h-[200px] flex flex-col gap-[12px] p-[16px] items-start overflow-hidden bg-[#f1f5f9]">
+      <ButtonPrimary label={"Pay \"now\""} className="relative shrink-0" />
+      <ButtonPrimary label="Save" icon={<IconHeart className="relative w-[16px] h-[16px] shrink-0" />} showChevron={true} className="relative shrink-0 self-stretch" />
+      <button className="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-[#dc2626] rounded-md">
+        <IconStar className="relative w-[16px] h-[16px] shrink-0" />
+        <span className="shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre">Delete</span>
+      </button>
+    </div>
+  );
+}
+=== IconStar.tsx (tsx) ===
+// tessel export: file="test.tessel.json" node="n_0000000001" revision=7
+// Component "Icon/Star"
+
+export type IconStarProps = {
+  className?: string;
+};
+
+export function IconStar({
+  className,
+}: IconStarProps) {
+  return (
+    <div className={`overflow-hidden ${className ?? "relative w-[16px] h-[16px]"}`}>
+      <svg className="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
+        <path className="fill-[#ffffff]" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z" />
+      </svg>
+    </div>
+  );
+}
+=== IconHeart.tsx (tsx) ===
+// tessel export: file="test.tessel.json" node="n_0000000001" revision=7
+// Component "Icon/Heart"
+
+export type IconHeartProps = {
+  className?: string;
+};
+
+export function IconHeart({
+  className,
+}: IconHeartProps) {
+  return (
+    <div className={`overflow-hidden ${className ?? "relative w-[16px] h-[16px]"}`}>
+      <svg className="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
+        <path className="fill-[#ffffff]" d="M8 15L2 9A3 3 0 0 1 8 4A3 3 0 0 1 14 9Z" />
+      </svg>
+    </div>
+  );
+}
+=== ButtonPrimary.tsx (tsx) ===
+// tessel export: file="test.tessel.json" node="n_0000000001" revision=7
+// Component "Button/Primary"
+
+import type { ReactNode } from "react";
+import { IconStar } from "./IconStar";
+
+export type ButtonPrimaryProps = {
+  label?: string;
+  showIcon?: boolean;
+  icon?: ReactNode;
+  showChevron?: boolean;
+  className?: string;
+};
+
+export function ButtonPrimary({
+  label = "Button",
+  showIcon = true,
+  icon = <IconStar className="relative w-[16px] h-[16px] shrink-0" />,
+  showChevron = false,
+  className,
+}: ButtonPrimaryProps) {
+  return (
+    <button className={`flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-primary rounded-md ${className ?? "relative w-fit"}`}>
+      {showIcon && icon}
+      <span className="shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre">{label}</span>
+      {showChevron && (
+        <span className="w-[8px] h-[8px] shrink-0 bg-[#ffffff]" />
+      )}
+    </button>
+  );
+}
+=== styles.css (css) ===
+/* tessel export: file="test.tessel.json" node="n_0000000001" revision=7 */
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2563eb;
+  --spacing-3: 12px;
+  --radius-md: 8px;
+}

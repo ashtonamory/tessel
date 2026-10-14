@@ -1,0 +1,51 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "pages": [{ "id": "p_0000000001", "name": "Page", "children": [
+    { "id": "n_0000000001", "name": "Screen", "kind": "frame", "x": 0, "y": 0, "width": 400, "height": 300,
+      "fills": [{ "type": "solid", "color": "#f8fafc" },
+        { "type": "linear_gradient", "start": [0.5, 0], "end": [0.5, 1],
+          "stops": [{ "offset": 0, "color": "#ffffff00" }, { "offset": 1, "color": "#0000001a" }] }],
+      "strokes": [{ "type": "solid", "color": "#cbd5e1" }], "stroke_width": 2,
+      "children": [
+        { "id": "n_0000000002", "name": "Top Left", "kind": "rect", "x": 10, "y": 10, "width": 50, "height": 50,
+          "fills": [{ "type": "solid", "color": "#ef4444" }], "corner_radius": [8, 0, 8, 0] },
+        { "id": "n_0000000003", "name": "Bottom Right", "kind": "rect", "x": 330, "y": 230, "width": 60, "height": 60,
+          "constraints": { "horizontal": "right", "vertical": "bottom" },
+          "strokes": [{ "type": "solid", "color": "#0f172a" }], "stroke_width": 2, "stroke_align": "center" },
+        { "id": "n_0000000004", "name": "Banner", "kind": "rect", "x": 20, "y": 100, "width": 360, "height": 40,
+          "constraints": { "horizontal": "left_right", "vertical": "top_bottom" },
+          "fills": [{ "type": "solid", "color": "#3b82f6" }],
+          "strokes": [{ "type": "solid", "color": "#1e40af" }], "stroke_width": 3 },
+        { "id": "n_0000000005", "name": "Dot", "kind": "ellipse", "x": 180, "y": 130, "width": 40, "height": 40,
+          "constraints": { "horizontal": "center", "vertical": "center" },
+          "fills": [{ "type": "radial_gradient", "center": [0.5, 0.5], "radius": [0.5, 0.5],
+            "stops": [{ "offset": 0, "color": "#fde047" }, { "offset": 1, "color": "#f97316" }] }],
+          "shadows": [{ "x": 2, "y": 2, "blur": 4, "spread": 1, "color": "#00000040" }] },
+        { "id": "n_0000000006", "name": "Scaled", "kind": "rect", "x": 0, "y": 260, "width": 200, "height": 40,
+          "constraints": { "horizontal": "scale", "vertical": "scale" },
+          "fills": [{ "type": "solid", "color": "#22c55e" }] },
+        { "id": "n_0000000007", "name": "Cluster", "kind": "group", "x": 250, "y": 20, "children": [
+          { "id": "n_0000000008", "name": "One", "kind": "rect", "x": 0, "y": 0, "width": 20, "height": 20,
+            "fills": [{ "type": "solid", "color": "#a855f7" }] },
+          { "id": "n_0000000009", "name": "Two", "kind": "rect", "x": 30, "y": 10, "width": 20, "height": 20,
+            "fills": [{ "type": "solid", "color": "#a855f7" }] }
+        ] },
+        { "id": "n_000000000a", "name": "Faded", "kind": "group", "x": 20, "y": 160, "opacity": 0.5, "children": [
+          { "id": "n_000000000b", "name": "Square", "kind": "rect", "x": 10, "y": 5, "width": 30, "height": 30,
+            "fills": [{ "type": "solid", "color": "#64748b" }] },
+          { "id": "n_000000000c", "name": "Note", "kind": "text", "x": 50, "y": 10, "width": 60, "height": 20,
+            "content": "Hi  there", "sizing": "fixed", "vertical_align": "middle",
+            "style": { "font_family": "Inter", "font_size": 12, "italic": true, "decoration": "strike" },
+            "fills": [{ "type": "solid", "color": "#334155" }] }
+        ] },
+        { "id": "n_000000000d", "name": "Caption", "kind": "text", "x": 300, "y": 150, "rotation": 90,
+          "content": "Rotated", "align": "right",
+          "fills": [{ "type": "linear_gradient", "start": [0, 0], "end": [1, 1],
+            "stops": [{ "offset": 0, "color": "#ef4444" }, { "offset": 1, "color": "#3b82f6" }] }] },
+        { "id": "n_000000000e", "name": "Line", "kind": "vector", "x": 100, "y": 200, "width": 100, "height": 0,
+          "path": "M0 0L100 0", "strokes": [{ "type": "solid", "color": "#0f172a" }], "stroke_width": 2 },
+        { "id": "n_000000000f", "name": "Ghost", "kind": "rect", "x": 0, "y": 0, "width": 10, "height": 10,
+          "visible": false }
+      ] }
+  ] }]
+}

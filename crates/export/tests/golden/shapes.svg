@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="10 20 200 120">
+  <defs>
+    <filter id="b1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+  <g id="n_0000000001" data-name="Board">
+    <g transform="translate(10 20)">
+      <rect x="0" y="0" width="200" height="120" fill="#ffffff"/>
+    </g>
+    <g id="n_0000000002" data-name="Card" transform="translate(20 30)">
+      <g transform="translate(2 4)">
+        <rect x="-1" y="-1" width="82" height="52" rx="9" ry="9" fill="#000000" fill-opacity="0.251" filter="url(#b1)"/>
+      </g>
+      <rect x="0" y="0" width="80" height="50" rx="8" ry="8" fill="#2563eb"/>
+      <rect x="1" y="1" width="78" height="48" rx="7" ry="7" fill="none" stroke="#000000" stroke-opacity="0.502" stroke-width="2"/>
+    </g>
+    <g id="n_0000000003" data-name="Tab" transform="translate(110 30)" opacity="0.5">
+      <path d="M12 0H48A12 12 0 0 1 60 12V40H4A4 4 0 0 1 0 36V12A12 12 0 0 1 12 0Z" fill="#16a34a"/>
+    </g>
+    <g id="n_0000000004" data-name="Dot" transform="translate(20 90)">
+      <ellipse cx="20" cy="15" rx="20" ry="15" fill="#dc2626"/>
+      <ellipse cx="20" cy="15" rx="20" ry="15" fill="none" stroke="#111111" stroke-width="4"/>
+    </g>
+    <g id="n_0000000005" data-name="Zig &amp; &lt;Zag&gt;" transform="translate(80 90)">
+      <path d="M0 0L30 30L60 0" fill="none" stroke="#7c3aed" stroke-width="3"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,99 @@
+{
+  "description": "A group in a row is a fixed-size leaf the size of its content.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "width": "hug",
+        "height": "hug"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 20,
+          "height": 20
+        },
+        {
+          "id": "g",
+          "name": "g",
+          "kind": "group",
+          "children": [
+            {
+              "id": "r1",
+              "name": "r1",
+              "kind": "rect",
+              "width": 30,
+              "height": 10,
+              "x": 100,
+              "y": 100
+            },
+            {
+              "id": "r2",
+              "name": "r2",
+              "kind": "rect",
+              "width": 10,
+              "height": 20,
+              "x": 110,
+              "y": 120
+            }
+          ]
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 10,
+          "height": 10
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      80,
+      40
+    ],
+    "a": [
+      0,
+      0,
+      20,
+      20
+    ],
+    "g": [
+      30,
+      0,
+      30,
+      40
+    ],
+    "r1": [
+      30,
+      0,
+      30,
+      10
+    ],
+    "r2": [
+      40,
+      20,
+      10,
+      20
+    ],
+    "c": [
+      70,
+      0,
+      10,
+      10
+    ]
+  }
+}

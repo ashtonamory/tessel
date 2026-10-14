@@ -1,0 +1,12 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "pages": [{ "id": "p_0000000001", "name": "P", "children": [
+    { "id": "n_0000000001", "name": "Clip", "kind": "frame", "x": 0, "y": 0, "width": 100, "height": 80,
+      "corner_radius": 12, "fills": [{ "type": "solid", "color": "#e2e8f0" }],
+      "strokes": [{ "type": "solid", "color": "#334155" }],
+      "children": [
+        { "id": "n_0000000002", "name": "Overflow", "kind": "rect", "x": 60, "y": 40, "width": 80, "height": 80,
+          "fills": [{ "type": "solid", "color": "#f97316" }] }
+      ] }
+  ] }]
+}

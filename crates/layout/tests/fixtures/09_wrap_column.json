@@ -1,0 +1,70 @@
+{
+  "description": "Column wrap without a cross gap: lines are gap apart too.",
+  "nodes": [
+    {
+      "id": "root",
+      "name": "root",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 120,
+      "height": 100,
+      "layout": {
+        "direction": "column",
+        "wrap": true,
+        "gap": 10,
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "a",
+          "name": "a",
+          "kind": "rect",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "kind": "rect",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "kind": "rect",
+          "width": 40,
+          "height": 40
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "root": [
+      0,
+      0,
+      120,
+      100
+    ],
+    "a": [
+      0,
+      0,
+      40,
+      40
+    ],
+    "b": [
+      0,
+      50,
+      40,
+      40
+    ],
+    "c": [
+      50,
+      0,
+      40,
+      40
+    ]
+  }
+}

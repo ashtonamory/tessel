@@ -1,0 +1,357 @@
+{
+  "description": "Every align value on a row: start, center, end, stretch (stretches only the hug child), baseline (boxes align on their bottom edges).",
+  "nodes": [
+    {
+      "id": "start",
+      "name": "start",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "align": "start",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "sa",
+          "name": "sa",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "sb",
+          "name": "sb",
+          "kind": "rect",
+          "width": 40,
+          "height": 60
+        },
+        {
+          "id": "sc",
+          "name": "sc",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 30,
+          "height": 0,
+          "layout": {
+            "direction": "row",
+            "width": "fixed",
+            "height": "hug"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "center",
+      "name": "center",
+      "kind": "frame",
+      "x": 0,
+      "y": 110,
+      "width": 200,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "align": "center",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "ca",
+          "name": "ca",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "cb",
+          "name": "cb",
+          "kind": "rect",
+          "width": 40,
+          "height": 60
+        },
+        {
+          "id": "cc",
+          "name": "cc",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 30,
+          "height": 0,
+          "layout": {
+            "direction": "row",
+            "width": "fixed",
+            "height": "hug"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "name": "end",
+      "kind": "frame",
+      "x": 0,
+      "y": 220,
+      "width": 200,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "align": "end",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "ea",
+          "name": "ea",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "eb",
+          "name": "eb",
+          "kind": "rect",
+          "width": 40,
+          "height": 60
+        },
+        {
+          "id": "ec",
+          "name": "ec",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 30,
+          "height": 0,
+          "layout": {
+            "direction": "row",
+            "width": "fixed",
+            "height": "hug"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "stretch",
+      "name": "stretch",
+      "kind": "frame",
+      "x": 0,
+      "y": 330,
+      "width": 200,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "align": "stretch",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "xa",
+          "name": "xa",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "xb",
+          "name": "xb",
+          "kind": "rect",
+          "width": 40,
+          "height": 60
+        },
+        {
+          "id": "xc",
+          "name": "xc",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 30,
+          "height": 0,
+          "layout": {
+            "direction": "row",
+            "width": "fixed",
+            "height": "hug"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "baseline",
+      "name": "baseline",
+      "kind": "frame",
+      "x": 0,
+      "y": 440,
+      "width": 200,
+      "height": 100,
+      "layout": {
+        "direction": "row",
+        "align": "baseline",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "ba",
+          "name": "ba",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "bb",
+          "name": "bb",
+          "kind": "rect",
+          "width": 40,
+          "height": 60
+        },
+        {
+          "id": "bc",
+          "name": "bc",
+          "kind": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 30,
+          "height": 0,
+          "layout": {
+            "direction": "row",
+            "width": "fixed",
+            "height": "hug"
+          },
+          "children": []
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "start": [
+      0,
+      0,
+      200,
+      100
+    ],
+    "sa": [
+      0,
+      0,
+      40,
+      20
+    ],
+    "sb": [
+      40,
+      0,
+      40,
+      60
+    ],
+    "sc": [
+      80,
+      0,
+      30,
+      0
+    ],
+    "center": [
+      0,
+      110,
+      200,
+      100
+    ],
+    "ca": [
+      0,
+      150,
+      40,
+      20
+    ],
+    "cb": [
+      40,
+      130,
+      40,
+      60
+    ],
+    "cc": [
+      80,
+      160,
+      30,
+      0
+    ],
+    "end": [
+      0,
+      220,
+      200,
+      100
+    ],
+    "ea": [
+      0,
+      300,
+      40,
+      20
+    ],
+    "eb": [
+      40,
+      260,
+      40,
+      60
+    ],
+    "ec": [
+      80,
+      320,
+      30,
+      0
+    ],
+    "stretch": [
+      0,
+      330,
+      200,
+      100
+    ],
+    "xa": [
+      0,
+      330,
+      40,
+      20
+    ],
+    "xb": [
+      40,
+      330,
+      40,
+      60
+    ],
+    "xc": [
+      80,
+      330,
+      30,
+      100
+    ],
+    "baseline": [
+      0,
+      440,
+      200,
+      100
+    ],
+    "ba": [
+      0,
+      480,
+      40,
+      20
+    ],
+    "bb": [
+      40,
+      440,
+      40,
+      60
+    ],
+    "bc": [
+      80,
+      500,
+      30,
+      0
+    ]
+  }
+}

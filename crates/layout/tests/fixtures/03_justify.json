@@ -1,0 +1,207 @@
+{
+  "description": "Every justify value on a row: start, center, end, space_between.",
+  "nodes": [
+    {
+      "id": "start",
+      "name": "start",
+      "kind": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 50,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "justify": "start",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "sta",
+          "name": "sta",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "stb",
+          "name": "stb",
+          "kind": "rect",
+          "width": 30,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "id": "center",
+      "name": "center",
+      "kind": "frame",
+      "x": 0,
+      "y": 60,
+      "width": 200,
+      "height": 50,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "justify": "center",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "cea",
+          "name": "cea",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "ceb",
+          "name": "ceb",
+          "kind": "rect",
+          "width": 30,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "name": "end",
+      "kind": "frame",
+      "x": 0,
+      "y": 120,
+      "width": 200,
+      "height": 50,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "justify": "end",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "ena",
+          "name": "ena",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "enb",
+          "name": "enb",
+          "kind": "rect",
+          "width": 30,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "id": "space_between",
+      "name": "space_between",
+      "kind": "frame",
+      "x": 0,
+      "y": 180,
+      "width": 200,
+      "height": 50,
+      "layout": {
+        "direction": "row",
+        "gap": 10,
+        "justify": "space_between",
+        "width": "fixed",
+        "height": "fixed"
+      },
+      "children": [
+        {
+          "id": "spa",
+          "name": "spa",
+          "kind": "rect",
+          "width": 40,
+          "height": 20
+        },
+        {
+          "id": "spb",
+          "name": "spb",
+          "kind": "rect",
+          "width": 30,
+          "height": 20
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "start": [
+      0,
+      0,
+      200,
+      50
+    ],
+    "sta": [
+      0,
+      0,
+      40,
+      20
+    ],
+    "stb": [
+      50,
+      0,
+      30,
+      20
+    ],
+    "center": [
+      0,
+      60,
+      200,
+      50
+    ],
+    "cea": [
+      60,
+      60,
+      40,
+      20
+    ],
+    "ceb": [
+      110,
+      60,
+      30,
+      20
+    ],
+    "end": [
+      0,
+      120,
+      200,
+      50
+    ],
+    "ena": [
+      120,
+      120,
+      40,
+      20
+    ],
+    "enb": [
+      170,
+      120,
+      30,
+      20
+    ],
+    "space_between": [
+      0,
+      180,
+      200,
+      50
+    ],
+    "spa": [
+      0,
+      180,
+      40,
+      20
+    ],
+    "spb": [
+      170,
+      180,
+      30,
+      20
+    ]
+  }
+}

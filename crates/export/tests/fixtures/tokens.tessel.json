@@ -1,0 +1,24 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "tokens": {
+    "colors": { "color.primary": "#2563eb", "color.ink": "#0f172a" },
+    "radii": { "radius.md": 10 },
+    "spacing": { "space.4": 16 }
+  },
+  "styles": [
+    { "id": "s_0000000001", "name": "Brand", "kind": "fill",
+      "fills": [{ "type": "solid", "color": "{color.primary}" }] },
+    { "id": "s_0000000002", "name": "Lift", "kind": "effect",
+      "shadows": [{ "x": 0, "y": 4, "blur": 8, "color": "{color.ink}" }] },
+    { "id": "s_0000000003", "name": "Outline", "kind": "stroke",
+      "strokes": [{ "type": "solid", "color": "{color.ink}" }], "width": 3 }
+  ],
+  "pages": [{ "id": "p_0000000001", "name": "P", "children": [
+    { "id": "n_0000000001", "name": "Button", "kind": "rect", "x": 0, "y": 0, "width": 120, "height": 40,
+      "corner_radius": "{radius.md}", "fill_style": "s_0000000001", "effect_style": "s_0000000002",
+      "stroke_style": "s_0000000003" },
+    { "id": "n_0000000002", "name": "Plain", "kind": "rect", "x": 0, "y": 60, "width": 120, "height": 40,
+      "corner_radius": ["{radius.md}", 0, "{radius.md}", 0],
+      "fills": [{ "type": "solid", "color": "{color.primary}" }] }
+  ] }]
+}
