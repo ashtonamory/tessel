@@ -30,7 +30,7 @@
           "width": "hug", "height": "hug" },
         "children": [
           { "id": "n_0000000107", "name": "Icon", "kind": "instance", "component": "c_0000000001", "width": 16, "height": 16 },
-          { "id": "n_0000000106", "name": "Label", "kind": "text", "content": "Button", "sizing": "fixed", "width": 80, "height": 16,
+          { "id": "n_0000000106", "name": "Label", "kind": "text", "content": "Button", "sizing": "fixed", "width": 160, "height": 16,
             "style": { "font_family": "Inter", "font_weight": 600, "font_size": 14 },
             "fills": [{ "type": "solid", "color": "#ffffff" }] },
           { "id": "n_0000000108", "name": "Chevron", "kind": "rect", "width": 8, "height": 8, "visible": false,

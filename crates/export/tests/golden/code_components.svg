@@ -6,7 +6,7 @@
       <rect x="0" y="0" width="360" height="200"/>
     </clipPath>
     <clipPath id="c2">
-      <rect x="0" y="0" width="136" height="40" rx="8" ry="8" transform="translate(16 16)"/>
+      <rect x="0" y="0" width="216" height="40" rx="8" ry="8" transform="translate(16 16)"/>
     </clipPath>
     <clipPath id="c3">
       <rect x="0" y="0" width="16" height="16" transform="translate(32 28)"/>
@@ -18,7 +18,7 @@
       <rect x="0" y="0" width="16" height="16" transform="translate(32 80)"/>
     </clipPath>
     <clipPath id="c6">
-      <rect x="0" y="0" width="136" height="40" rx="8" ry="8" transform="translate(16 120)"/>
+      <rect x="0" y="0" width="216" height="40" rx="8" ry="8" transform="translate(16 120)"/>
     </clipPath>
     <clipPath id="c7">
       <rect x="0" y="0" width="16" height="16" transform="translate(32 132)"/>
@@ -29,7 +29,7 @@
     <g clip-path="url(#c1)">
       <g id="n_0000000002" data-name="Pay">
         <g transform="translate(16 16)">
-          <rect x="0" y="0" width="136" height="40" rx="8" ry="8" fill="#2563eb"/>
+          <rect x="0" y="0" width="216" height="40" rx="8" ry="8" fill="#2563eb"/>
         </g>
         <g clip-path="url(#c2)">
           <g id="n_0000000002/n_0000000107" data-name="Icon">
@@ -63,14 +63,14 @@
               <tspan x="0" y="#">Save</tspan>
             </text>
           </g>
-          <g id="n_0000000003/n_0000000108" data-name="Chevron" transform="translate(144 84)">
+          <g id="n_0000000003/n_0000000108" data-name="Chevron" transform="translate(224 84)">
             <rect x="0" y="0" width="8" height="8" fill="#ffffff"/>
           </g>
         </g>
       </g>
       <g id="n_0000000004" data-name="Danger">
         <g transform="translate(16 120)">
-          <rect x="0" y="0" width="136" height="40" rx="8" ry="8" fill="#dc2626"/>
+          <rect x="0" y="0" width="216" height="40" rx="8" ry="8" fill="#dc2626"/>
         </g>
         <g clip-path="url(#c6)">
           <g id="n_0000000004/n_0000000107" data-name="Icon">

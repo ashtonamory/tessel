@@ -1,7 +1,7 @@
 {
   "format": { "name": "tessel", "version": 1 },
   "pages": [{ "id": "p_0000000001", "name": "P", "children": [
-    { "id": "n_0000000001", "name": "Label", "kind": "text", "x": 5, "y": 6, "width": 200, "height": 60,
+    { "id": "n_0000000001", "name": "Label", "kind": "text", "x": 5, "y": 6, "width": 400, "height": 60,
       "content": "Hello <world>\nSecond line",
       "style": { "font_family": "Inter", "font_weight": 700, "font_size": 20, "letter_spacing": 0.5, "decoration": "underline" },
       "align": "center", "sizing": "fixed",

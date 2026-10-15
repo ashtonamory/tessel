@@ -10,19 +10,20 @@
 <link rel="stylesheet" href="output.css">
 </head>
 <body>
-  <div class="relative w-[320px] flex flex-col gap-[16px] p-[24px] overflow-hidden bg-[#ffffff] [outline:1px_solid_#e2e8f0] [outline-offset:-1px] rounded-[16px] [box-shadow:0_1px_2px_0_#0f172a1a,_0_4px_12px_0_#0f172a26]">
+  <div class="relative w-[560px] flex flex-col gap-[16px] p-[24px] overflow-hidden bg-[#ffffff] [outline:1px_solid_#e2e8f0] [outline-offset:-1px] rounded-[16px] [box-shadow:0_1px_2px_0_#0f172a1a,_0_4px_12px_0_#0f172a26]">
     <header class="relative shrink-0 self-stretch flex gap-[8px] justify-between items-center overflow-hidden">
-      <h1 class="shrink-0 font-['Inter',_sans-serif] text-[32px] font-bold leading-[40px] tracking-[-0.5px] text-[#0f172a] whitespace-pre">Pro</h1>
+      <h1 class="w-[120px] h-[40px] shrink-0 font-['Inter',_sans-serif] text-[32px] font-bold leading-[40px] tracking-[-0.5px] text-[#0f172a] whitespace-pre-wrap">Pro</h1>
       <svg class="w-[24px] h-[24px] shrink-0 overflow-visible">
         <path class="fill-[#2563eb]" d="M12 2L15 9H22L16 14L18 22L12 17L6 22L8 14L2 9H9Z"></path>
       </svg>
     </header>
-    <p class="shrink-0 font-['Inter',_sans-serif] text-[24px] font-semibold leading-[normal] text-[#0f172a] whitespace-pre">$29 / month</p>
+    <p class="w-[320px] h-[30px] shrink-0 font-['Inter',_sans-serif] text-[24px] font-semibold leading-[normal] text-[#0f172a] whitespace-pre-wrap">$29 / month</p>
     <p class="shrink-0 self-stretch font-['Inter',_sans-serif] text-[16px] font-normal leading-[150%] text-[#475569] whitespace-pre-wrap">Everything in Free, plus
-unlimited projects &amp; &lt;priority&gt; support.</p>
-    <img class="w-[272px] h-[120px] shrink-0 object-cover rounded-[8px]" src="assets/1c5ce851caad.png" alt="Hero">
+unlimited projects &amp;
+&lt;priority&gt; support.</p>
+    <img class="w-[512px] h-[120px] shrink-0 object-cover rounded-[8px]" src="assets/1c5ce851caad.png" alt="Hero">
     <button class="relative shrink-0 self-stretch flex px-[16px] py-[12px] justify-center items-center overflow-hidden [background:linear-gradient(90deg,_#2563eb_0%,_#7c3aed_100%)] rounded-[8px]">
-      <span class="shrink-0 font-['Inter',_sans-serif] text-[16px] font-semibold leading-[normal] uppercase text-[#ffffff] whitespace-pre">Buy now</span>
+      <span class="w-[200px] h-[20px] shrink-0 font-['Inter',_sans-serif] text-[16px] font-semibold leading-[normal] uppercase text-[#ffffff] whitespace-pre-wrap">Buy now</span>
     </button>
     <div class="absolute right-[8px] w-[64px] top-[-12px] h-[24px] bg-[#f59e0b] rounded-[12px] opacity-[0.9]"></div>
   </div>

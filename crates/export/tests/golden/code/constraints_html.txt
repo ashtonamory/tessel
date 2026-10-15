@@ -145,7 +145,7 @@ ul {
 .faded {
   position: absolute;
   left: 30px;
-  width: 100px;
+  width: 160px;
   top: 165px;
   height: 30px;
   opacity: 0.5;
@@ -163,7 +163,7 @@ ul {
 .note {
   position: absolute;
   left: 40px;
-  width: 60px;
+  width: 120px;
   top: 5px;
   height: 20px;
   font-family: 'Inter', sans-serif;
@@ -182,14 +182,14 @@ ul {
 .caption {
   position: absolute;
   left: 300px;
-  width: 58px;
+  width: 120px;
   top: 150px;
   height: 19px;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: normal;
-  background: linear-gradient(108.14deg, #ef4444 0%, #3b82f6 100%);
+  background: linear-gradient(99deg, #ef4444 0%, #3b82f6 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

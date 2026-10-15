@@ -17,7 +17,7 @@
           <path class="fill-[#ffffff]" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z"></path>
         </svg>
       </span>
-      <span class="w-[80px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Pay &quot;now&quot;</span>
+      <span class="w-[160px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Pay &quot;now&quot;</span>
     </button>
     <button class="relative shrink-0 self-stretch flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-primary rounded-md">
       <span class="relative w-[16px] h-[16px] shrink-0 overflow-hidden">
@@ -25,7 +25,7 @@
           <path class="fill-[#ffffff]" d="M8 15L2 9A3 3 0 0 1 8 4A3 3 0 0 1 14 9Z"></path>
         </svg>
       </span>
-      <span class="w-[80px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Save</span>
+      <span class="w-[160px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Save</span>
       <span class="w-[8px] h-[8px] shrink-0 bg-[#ffffff]"></span>
     </button>
     <button class="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-[#dc2626] rounded-md">
@@ -34,7 +34,7 @@
           <path class="fill-[#ffffff]" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z"></path>
         </svg>
       </span>
-      <span class="w-[80px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Delete</span>
+      <span class="w-[160px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Delete</span>
     </button>
   </div>
 </body>

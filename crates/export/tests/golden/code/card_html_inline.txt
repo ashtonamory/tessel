@@ -18,7 +18,8 @@
     </header>
     <p class="price" data-node="n_0000000005">$29 / month</p>
     <p class="description body" data-node="n_0000000006">Everything in Free, plus
-unlimited projects &amp; &lt;priority&gt; support.</p>
+unlimited projects &amp;
+&lt;priority&gt; support.</p>
     <img class="hero" data-node="n_0000000007" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP5z8DwHwAFFAID4lKwewAAAABJRU5ErkJggg==" alt="Hero">
     <button class="buy-button" data-node="n_0000000008">
       <span class="label" data-node="n_0000000009">Buy now</span>
@@ -78,7 +79,7 @@ ul {
 
 .pricing-card {
   position: relative;
-  width: 320px;
+  width: 560px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -103,9 +104,11 @@ ul {
 }
 
 .title {
+  width: 120px;
+  height: 40px;
   flex-shrink: 0;
   color: #0f172a;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .icon {
@@ -120,13 +123,15 @@ ul {
 }
 
 .price {
+  width: 320px;
+  height: 30px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
   font-size: 24px;
   font-weight: 600;
   line-height: normal;
   color: #0f172a;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .description {
@@ -137,7 +142,7 @@ ul {
 }
 
 .hero {
-  width: 272px;
+  width: 512px;
   height: 120px;
   flex-shrink: 0;
   object-fit: cover;
@@ -158,6 +163,8 @@ ul {
 }
 
 .label {
+  width: 200px;
+  height: 20px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
@@ -165,7 +172,7 @@ ul {
   line-height: normal;
   text-transform: uppercase;
   color: #ffffff;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .badge {

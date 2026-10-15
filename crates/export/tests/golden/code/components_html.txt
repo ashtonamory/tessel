@@ -125,7 +125,7 @@ ul {
 }
 
 .label {
-  width: 80px;
+  width: 160px;
   height: 16px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
@@ -171,7 +171,7 @@ ul {
 }
 
 .label-2 {
-  width: 80px;
+  width: 160px;
   height: 16px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
@@ -223,7 +223,7 @@ ul {
 }
 
 .label-3 {
-  width: 80px;
+  width: 160px;
   height: 16px;
   flex-shrink: 0;
   font-family: 'Inter', sans-serif;
