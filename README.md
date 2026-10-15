@@ -75,7 +75,7 @@ requirement on both distributions.
 ## Build and run
 
 ```sh
-git clone <this repository> tessel && cd tessel
+git clone https://github.com/sasukevibes/tessel tessel && cd tessel
 cargo run --release -p app -- [FILE.tessel.json]
 ```
 
