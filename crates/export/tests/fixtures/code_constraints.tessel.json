@@ -33,13 +33,13 @@
         { "id": "n_000000000a", "name": "Faded", "kind": "group", "x": 20, "y": 160, "opacity": 0.5, "children": [
           { "id": "n_000000000b", "name": "Square", "kind": "rect", "x": 10, "y": 5, "width": 30, "height": 30,
             "fills": [{ "type": "solid", "color": "#64748b" }] },
-          { "id": "n_000000000c", "name": "Note", "kind": "text", "x": 50, "y": 10, "width": 60, "height": 20,
+          { "id": "n_000000000c", "name": "Note", "kind": "text", "x": 50, "y": 10, "width": 120, "height": 20,
             "content": "Hi  there", "sizing": "fixed", "vertical_align": "middle",
             "style": { "font_family": "Inter", "font_size": 12, "italic": true, "decoration": "strike" },
             "fills": [{ "type": "solid", "color": "#334155" }] }
         ] },
         { "id": "n_000000000d", "name": "Caption", "kind": "text", "x": 300, "y": 150, "rotation": 90,
-          "content": "Rotated", "align": "right",
+          "content": "Rotated", "align": "right", "sizing": "fixed", "width": 120, "height": 19,
           "fills": [{ "type": "linear_gradient", "start": [0, 0], "end": [1, 1],
             "stops": [{ "offset": 0, "color": "#ef4444" }, { "offset": 1, "color": "#3b82f6" }] }] },
         { "id": "n_000000000e", "name": "Line", "kind": "vector", "x": 100, "y": 200, "width": 100, "height": 0,

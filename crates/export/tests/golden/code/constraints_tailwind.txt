@@ -18,11 +18,11 @@
     <div class="absolute left-0 w-[50%] top-[86.67%] h-[13.33%] bg-[#22c55e]"></div>
     <div class="absolute left-[250px] w-[20px] top-[20px] h-[20px] bg-[#a855f7]"></div>
     <div class="absolute left-[280px] w-[20px] top-[30px] h-[20px] bg-[#a855f7]"></div>
-    <div class="absolute left-[30px] w-[100px] top-[165px] h-[30px] opacity-[0.5]">
+    <div class="absolute left-[30px] w-[160px] top-[165px] h-[30px] opacity-[0.5]">
       <div class="absolute left-0 w-[30px] top-0 h-[30px] bg-[#64748b]"></div>
-      <p class="absolute left-[40px] w-[60px] top-[5px] h-[20px] font-['Inter',_sans-serif] text-[12px] font-normal italic leading-[normal] line-through text-[#334155] whitespace-pre-wrap flex flex-col justify-center">Hi  there</p>
+      <p class="absolute left-[40px] w-[120px] top-[5px] h-[20px] font-['Inter',_sans-serif] text-[12px] font-normal italic leading-[normal] line-through text-[#334155] whitespace-pre-wrap flex flex-col justify-center">Hi  there</p>
     </div>
-    <p class="absolute left-[300px] top-[150px] font-['Inter',_sans-serif] text-[16px] font-normal leading-[normal] [background:linear-gradient(108.18deg,_#ef4444_0%,_#3b82f6_100%)] bg-clip-text text-transparent text-right whitespace-pre rotate-[90deg]">Rotated</p>
+    <p class="absolute left-[300px] w-[120px] top-[150px] h-[19px] font-['Inter',_sans-serif] text-[16px] font-normal leading-[normal] [background:linear-gradient(99deg,_#ef4444_0%,_#3b82f6_100%)] bg-clip-text text-transparent text-right whitespace-pre-wrap rotate-[90deg]">Rotated</p>
     <svg class="absolute left-[100px] w-[100px] top-[200px] h-[0] overflow-visible">
       <path class="fill-none stroke-[#0f172a] [stroke-width:2]" d="M0 0L100 0"></path>
     </svg>

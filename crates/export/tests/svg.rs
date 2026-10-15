@@ -1,6 +1,7 @@
 //! Golden SVG tests. Regenerate with `UPDATE_GOLDEN=1 cargo test -p export`
 //! and review the diff. Text positions depend on the installed fonts, so the
-//! text golden masks `y` values (and the test checks only structure).
+//! goldens mask text baselines; fixtures give text a fixed size so boxes do not
+//! depend on measured glyphs.
 
 use std::fs;
 use std::path::PathBuf;
@@ -72,11 +73,25 @@ fn check(name: &str, svg: &str) {
     assert_eq!(svg, want, "{name}: output differs from {}", path.display());
 }
 
+/// A text baseline `y` depends on the font's metrics: mask it for goldens.
+fn mask_baselines(svg: &str) -> String {
+    svg.lines()
+        .map(|l| match l.find(" y=\"") {
+            Some(i) if l.contains("<tspan") => {
+                let rest = &l[i + 4..];
+                let end = rest.find('"').unwrap();
+                format!("{} y=\"#{}\n", &l[..i], &rest[end..])
+            }
+            _ => format!("{l}\n"),
+        })
+        .collect()
+}
+
 fn golden(name: &str, root: u64) {
     let svg = svg_of(name, root);
     // Deterministic: a second export is byte-identical.
     assert_eq!(svg, svg_of(name, root));
-    check(name, &svg);
+    check(name, &mask_baselines(&svg));
 }
 
 #[test]
@@ -135,22 +150,10 @@ fn exporting_a_nested_node_uses_its_bounds() {
 #[test]
 fn text_uses_layout_lines() {
     let svg = svg_of("text", 1);
-    // y depends on the font's metrics: mask it for the golden.
-    let masked: String = svg
-        .lines()
-        .map(|l| match l.find(" y=\"") {
-            Some(i) if l.contains("<tspan") => {
-                let rest = &l[i + 4..];
-                let end = rest.find('"').unwrap();
-                format!("{} y=\"#{}\n", &l[..i], &rest[end..])
-            }
-            _ => format!("{l}\n"),
-        })
-        .collect();
     assert!(svg.contains("Hello &lt;world&gt;"), "{svg}");
     assert!(svg.contains("Second line"), "{svg}");
     assert_eq!(svg.matches("<tspan").count(), 2);
-    check("text", &masked);
+    check("text", &mask_baselines(&svg));
 }
 
 #[test]
