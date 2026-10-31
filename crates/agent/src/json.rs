@@ -4,7 +4,7 @@
 
 use std::collections::{BTreeMap, HashMap};
 
-use doc::{Id, IdKind, Node, NodeId};
+use doc::{Id, IdKind, Node, NodeId, NodePatch};
 use layout::Geometry;
 use serde::Serialize;
 use serde_json::{json, Map, Value};
@@ -104,9 +104,37 @@ pub fn build_node(spec: Map<String, Value>) -> Result<Built, ToolError> {
     let root = path_label(&spec);
     let mut spec = Value::Object(spec);
     assign_ids(&mut spec, &root, &mut ids, "node")?;
-    let node: Node =
-        serde_json::from_value(spec).map_err(|e| ToolError::invalid_args(format!("node: {e}")))?;
+    let node: Node = serde_json::from_value(spec.clone())
+        .map_err(|e| ToolError::invalid_args(format!("node: {e}")))?;
+    check_keys(&spec, &node, "node")?;
     Ok(Built { node, ids })
+}
+
+/// The file format keeps unknown keys, so a spec with a misspelt or misplaced
+/// key (`font_size` beside `style` rather than in it) would build a node that
+/// silently ignores it. Hold each node's keys to what `update_node` accepts.
+fn check_keys(spec: &Value, node: &Node, at: &str) -> Result<(), ToolError> {
+    let Value::Object(obj) = spec else {
+        return Ok(());
+    };
+    let props: Map<String, Value> = obj
+        .iter()
+        .filter(|(k, _)| !matches!(k.as_str(), "id" | "kind" | "children"))
+        .map(|(k, v)| (k.clone(), v.clone()))
+        .collect();
+    let mut probe = node.clone();
+    if let Some(children) = probe.children_mut() {
+        children.clear();
+    }
+    NodePatch::from_json(Value::Object(props))
+        .and_then(|patch| patch.apply_to(&mut probe))
+        .map_err(|e| ToolError::invalid_args(format!("{at}: {e}")))?;
+    if let (Some(Value::Array(specs)), Some(children)) = (obj.get("children"), node.children()) {
+        for (i, (s, c)) in specs.iter().zip(children).enumerate() {
+            check_keys(s, c, &format!("{at}.children[{i}]"))?;
+        }
+    }
+    Ok(())
 }
 
 fn path_label(obj: &Map<String, Value>) -> String {
@@ -173,5 +201,43 @@ pub fn refresh_ids(node: &mut Node) {
         for c in children {
             refresh_ids(c);
         }
+    }
+}
+
+#[cfg(test)]
+mod key_tests {
+    use super::*;
+    use doc::NodeKind;
+
+    fn build(v: Value) -> Result<Built, ToolError> {
+        build_node(v.as_object().unwrap().clone())
+    }
+
+    #[test]
+    fn create_node_refuses_keys_update_node_would() {
+        let misplaced = build(json!({ "kind": "text", "content": "Hi", "font_size": 88 }));
+        assert!(misplaced.err().unwrap().to_json().contains("font_size"));
+        let wrong_kind = build(json!({ "kind": "rect", "content": "Hi" }));
+        assert!(wrong_kind
+            .err()
+            .unwrap()
+            .to_json()
+            .contains("not applicable"));
+        let nested = build(json!({ "kind": "frame", "children": [
+            { "kind": "rect" },
+            { "kind": "text", "colour": "#fff" }
+        ]}));
+        assert!(nested.err().unwrap().to_json().contains("node.children[1]"));
+
+        let ok = build(
+            json!({ "kind": "frame", "name": "Card", "fills": [], "children": [
+                { "kind": "text", "content": "Hi", "style": { "font_size": 88 }, "sizing": "fixed" }
+            ]}),
+        )
+        .unwrap();
+        let NodeKind::Text(t) = &ok.node.children().unwrap()[0].kind else {
+            panic!("a text node")
+        };
+        assert_eq!(t.style.font_size, 88.0);
     }
 }

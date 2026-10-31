@@ -237,7 +237,8 @@ the design files in one folder, for an agent on a server or a computer nobody
 is looking at. It adds `list_documents`, `open_document`, `new_document` and
 `import_image` (`--images DIR` lets it read photos from another folder too),
 saves every edit to its file at once, and never touches anything outside
-`DIR`.
+`DIR`. `--templates DIR` lets `new_document` start from a copy of a design in
+that folder, and `--fonts DIR` uses the fonts in a folder as if installed.
 
 ```sh
 claude mcp add tessel-headless -- tessel mcp --headless --root ~/Designs

@@ -11,21 +11,25 @@ use crate::workspace::Workspace;
 pub const RENDER_USAGE: &str = "\
 usage: tessel render FILE.tessel.json [-o OUT] [--node ID] [--format png|jpeg|svg]
                      [--scale N] [--background #rrggbb[aa]] [--quality 1-100]
-                     [--layers OUT.json]
+                     [--layers OUT.json] [--fonts DIR]
 
 Renders one node of a design file with no window: by default the first layer
 of the first page (a design file's frame), to FILE.png beside it. The format
 follows OUT's extension unless --format is given. --layers also writes the
 layer map: every visible layer's box in the image's pixels, back to front.
+--fonts DIR uses the fonts in DIR as if installed.
 TESSEL_GPU=software renders on the CPU (Mesa's lavapipe).";
 
 pub const MCP_USAGE: &str = "\
-usage: tessel mcp --headless --root DIR [--images DIR]... [--open FILE]
+usage: tessel mcp --headless --root DIR [--images DIR]... [--templates DIR]
+                  [--fonts DIR]... [--open FILE]
 
 Serves the agent tools over stdio with no window, on the design files in DIR:
 list_documents, open_document, new_document and import_image, then the usual
 tools on the open document. Every edit is saved to its file at once. Nothing
-outside DIR is read or written, except images from each --images DIR.";
+outside DIR is read or written, except images from each --images DIR,
+templates (copied by new_document) from --templates DIR and fonts from each
+--fonts DIR, used as if installed.";
 
 /// `tessel render …`
 pub fn render_main(args: impl IntoIterator<Item = OsString>) -> ExitCode {
@@ -74,6 +78,10 @@ fn run_render(args: impl IntoIterator<Item = OsString>) -> Result<Option<String>
             Some("-o" | "--out") => out = Some(value(&mut args, "-o")?.into()),
             Some("--node") => opts.node = Some(value(&mut args, "--node")?),
             Some("--layers") => layers = Some(value(&mut args, "--layers")?.into()),
+            Some("--fonts") => {
+                let dir = value(&mut args, "--fonts")?;
+                layout::text::add_fonts(dir.as_ref()).map_err(|e| Failed(format!("{dir}: {e}")))?;
+            }
             Some("--format") => {
                 let v = value(&mut args, "--format")?;
                 format = Some(
@@ -143,6 +151,8 @@ pub fn mcp_main(args: impl IntoIterator<Item = OsString>) -> ExitCode {
     let mut root: Option<PathBuf> = None;
     let mut images = Vec::new();
     let mut open: Option<String> = None;
+    let mut templates: Option<PathBuf> = None;
+    let mut fonts: Vec<PathBuf> = Vec::new();
     let mut args = args.into_iter();
     let usage = |e: String| {
         eprintln!("tessel mcp: {e}\n\n{MCP_USAGE}");
@@ -158,6 +168,10 @@ pub fn mcp_main(args: impl IntoIterator<Item = OsString>) -> ExitCode {
             Some("--root") => value(&mut args, "--root").map(|v| root = Some(v.into())),
             Some("--images") => value(&mut args, "--images").map(|v| images.push(PathBuf::from(v))),
             Some("--open") => value(&mut args, "--open").map(|v| open = Some(v)),
+            Some("--templates") => {
+                value(&mut args, "--templates").map(|v| templates = Some(v.into()))
+            }
+            Some("--fonts") => value(&mut args, "--fonts").map(|v| fonts.push(v.into())),
             _ => Err(Usage(format!("unexpected argument {arg:?}"))),
         };
         if let Err(Usage(e) | Failed(e)) = got {
@@ -167,13 +181,31 @@ pub fn mcp_main(args: impl IntoIterator<Item = OsString>) -> ExitCode {
     let Some(root) = root else {
         return usage("--root is required".into());
     };
-    let ws = match Workspace::new(&root, &images) {
+    let mut ws = match Workspace::new(&root, &images) {
         Ok(ws) => ws,
         Err(e) => {
             eprintln!("tessel mcp: {}: {e}", root.display());
             return ExitCode::FAILURE;
         }
     };
+    if let Some(dir) = &templates {
+        ws = match ws.with_templates(dir) {
+            Ok(ws) => ws,
+            Err(e) => {
+                eprintln!("tessel mcp: --templates {}: {e}", dir.display());
+                return ExitCode::FAILURE;
+            }
+        };
+    }
+    for dir in &fonts {
+        ws = match ws.with_fonts(dir) {
+            Ok(ws) => ws,
+            Err(e) => {
+                eprintln!("tessel mcp: --fonts {}: {e}", dir.display());
+                return ExitCode::FAILURE;
+            }
+        };
+    }
     if let Some(path) = &open {
         if let Err(e) = futures_open(&ws, path) {
             eprintln!("tessel mcp: --open {path}: {}", e.to_json());

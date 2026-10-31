@@ -432,13 +432,20 @@ pub struct NewDocumentArgs {
     /// Where to save it, ending in `.tessel.json`: relative to the workspace
     /// folder, or absolute inside it. Fails if the file exists.
     pub path: String,
-    /// The design's size in px, e.g. 1080 x 1350 for a portrait social post.
-    pub width: f32,
-    pub height: f32,
+    /// Start from a copy of this template (a `name` from list_documents'
+    /// `templates`) instead of a blank frame. Then leave out width, height
+    /// and background: the template has them.
+    #[serde(default)]
+    pub template: Option<String>,
+    /// A blank design's size in px, e.g. 1080 x 1350 for a portrait social post.
+    #[serde(default)]
+    pub width: Option<f32>,
+    #[serde(default)]
+    pub height: Option<f32>,
     /// The document title; default the file name.
     #[serde(default)]
     pub title: Option<String>,
-    /// The design frame's fill, `#rrggbb[aa]`; default white.
+    /// A blank design frame's fill, `#rrggbb[aa]`; default white.
     #[serde(default)]
     pub background: Option<String>,
 }

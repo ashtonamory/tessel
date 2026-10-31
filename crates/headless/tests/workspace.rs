@@ -230,3 +230,146 @@ async fn imported_images_are_saved_once_a_layer_uses_them() {
         .unwrap();
     assert!(root.join("post.assets").join(asset).is_file());
 }
+
+const TEMPLATE: &str = r##"{
+  "format": { "name": "tessel", "version": 1 },
+  "meta": { "title": "Big sale", "description": "One photo, a headline and a price." },
+  "tokens": { "colors": { "color.brand": "#e11d48" } },
+  "pages": [{ "id": "p_page000001", "name": "Post", "children": [
+    { "id": "n_post000001", "name": "Design", "kind": "frame",
+      "x": 0, "y": 0, "width": 1080, "height": 1350,
+      "fills": [{ "type": "solid", "color": "{color.brand}" }],
+      "children": [
+        { "id": "n_photo00001", "name": "Photo", "kind": "image", "asset": "ASSET",
+          "x": 0, "y": 0, "width": 1080, "height": 800 },
+        { "id": "n_title00001", "name": "Headline", "kind": "text", "content": "Headline",
+          "x": 60, "y": 880, "width": 960, "height": 120, "sizing": "fixed",
+          "style": { "font_size": 88 } }
+      ]}
+  ]}]
+}"##;
+
+#[tokio::test]
+async fn new_document_copies_a_template_and_its_images() {
+    let root = temp_dir("tpl-root");
+    let templates = temp_dir("tpl");
+    // The template's photo, stored by hash beside it as the app stores assets.
+    let png = templates.join("p.png");
+    png_file(&png, 8, 8);
+    let bytes = std::fs::read(&png).unwrap();
+    std::fs::remove_file(&png).unwrap();
+    let assets = doc::assets::Assets::new();
+    let asset = assets.add(bytes, "png");
+    std::fs::write(
+        templates.join("sale.tessel.json"),
+        TEMPLATE.replace("ASSET", &asset.0),
+    )
+    .unwrap();
+    let loaded = doc::load_file(&templates.join("sale.tessel.json")).unwrap();
+    assets
+        .save(&templates.join("sale.assets"), &loaded.doc)
+        .unwrap();
+
+    let ws = Workspace::new(&root, &[])
+        .unwrap()
+        .with_templates(&templates)
+        .unwrap();
+    let listed = call(&ws, "list_documents", json!({})).await.unwrap();
+    assert_eq!(
+        listed["templates"],
+        json!([{ "name": "sale", "title": "Big sale",
+                 "description": "One photo, a headline and a price.",
+                 "width": 1080.0, "height": 1350.0 }])
+    );
+
+    let made = call(
+        &ws,
+        "new_document",
+        json!({ "path": "acme/fall.tessel.json", "template": "sale", "title": "Fall sale" }),
+    )
+    .await
+    .unwrap();
+    assert_eq!(made["title"], "Fall sale");
+    assert_eq!(made["pages"][0]["children"][0]["id"], "n_post000001");
+    assert!(root.join("acme/fall.assets").join(&asset.0).is_file());
+    let saved = std::fs::read_to_string(root.join("acme/fall.tessel.json")).unwrap();
+    assert!(
+        !saved.contains("description"),
+        "the template's blurb stays with it"
+    );
+    let tokens = call(&ws, "get_tokens", json!({})).await.unwrap();
+    assert_eq!(tokens["tokens"]["colors"]["color.brand"], "#e11d48");
+
+    for (args, why) in [
+        (
+            json!({ "path": "b.tessel.json", "template": "sale", "width": 10 }),
+            "a template has its own size",
+        ),
+        (
+            json!({ "path": "b.tessel.json", "template": "../tpl/sale" }),
+            "no template",
+        ),
+        (
+            json!({ "path": "b.tessel.json", "template": "missing" }),
+            "no template",
+        ),
+        (json!({ "path": "b.tessel.json" }), "give a template"),
+    ] {
+        let err = call(&ws, "new_document", args.clone()).await.unwrap_err();
+        assert!(err.contains(why), "{args}: {err}");
+    }
+
+    let plain = Workspace::new(&root, &[]).unwrap();
+    let err = call(
+        &plain,
+        "new_document",
+        json!({ "path": "c.tessel.json", "template": "sale" }),
+    )
+    .await
+    .unwrap_err();
+    assert!(err.contains("--templates"));
+}
+
+#[test]
+fn fonts_from_a_folder_are_listed_and_laid_out() {
+    let Some(font) = ["/usr/share/fonts", "/usr/local/share/fonts"]
+        .iter()
+        .flat_map(|d| walk(Path::new(d)))
+        .find(|p| p.extension().is_some_and(|e| e == "ttf"))
+    else {
+        eprintln!("skipping: no .ttf font installed");
+        return;
+    };
+    let dir = temp_dir("fonts");
+    std::fs::copy(&font, dir.join("f.ttf")).unwrap();
+    std::fs::write(dir.join("notes.txt"), "not a font").unwrap();
+    let ws = Workspace::new(&temp_dir("fonts-root"), &[])
+        .unwrap()
+        .with_fonts(&dir)
+        .unwrap();
+    let families = futures_list(&ws)["fonts"].clone();
+    let family = families[0]
+        .as_str()
+        .expect("the font's family is listed")
+        .to_string();
+    let mut text = layout::text::TextMeasurer::new();
+    assert!(text.has_family(&family), "{family} is usable once added");
+}
+
+fn futures_list(ws: &Workspace) -> Value {
+    use agent::AppHandle as _;
+    pollster::block_on(ws.documents(agent::DocumentCall::List)).unwrap()
+}
+
+fn walk(dir: &Path) -> Vec<PathBuf> {
+    let mut out = Vec::new();
+    for e in std::fs::read_dir(dir).into_iter().flatten().flatten() {
+        let p = e.path();
+        if p.is_dir() {
+            out.extend(walk(&p));
+        } else {
+            out.push(p);
+        }
+    }
+    out
+}
