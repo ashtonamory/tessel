@@ -51,11 +51,60 @@ impl Default for TextMeasurer {
     }
 }
 
+/// Font files added with [`add_fonts`], registered in every measurer made
+/// after. Held as blobs so each font context can register the same bytes.
+static EXTRA_FONTS: std::sync::RwLock<Vec<parley::fontique::Blob<u8>>> =
+    std::sync::RwLock::new(Vec::new());
+
+/// Make the fonts in `dir` (`.ttf`, `.otf`, `.ttc`; not its subfolders)
+/// available to text laid out from now on, as if installed. Returns the
+/// families they add, sorted. Measurers made earlier do not see them.
+pub fn add_fonts(dir: &std::path::Path) -> std::io::Result<Vec<String>> {
+    let mut files: Vec<_> = std::fs::read_dir(dir)?
+        .flatten()
+        .map(|e| e.path())
+        .filter(|p| {
+            p.is_file()
+                && p.extension().is_some_and(|e| {
+                    matches!(
+                        e.to_string_lossy().to_ascii_lowercase().as_str(),
+                        "ttf" | "otf" | "ttc"
+                    )
+                })
+        })
+        .collect();
+    files.sort();
+    let mut probe = FontContext::new();
+    let mut families = std::collections::BTreeSet::new();
+    let mut blobs = Vec::new();
+    for file in files {
+        let blob = parley::fontique::Blob::new(Arc::new(std::fs::read(&file)?));
+        let added = probe.collection.register_fonts(blob.clone(), None);
+        if added.is_empty() {
+            tracing::warn!("{}: not a font file", file.display());
+            continue;
+        }
+        for (id, _) in added {
+            if let Some(name) = probe.collection.family_name(id) {
+                families.insert(name.to_string());
+            }
+        }
+        blobs.push(blob);
+    }
+    EXTRA_FONTS.write().unwrap().extend(blobs);
+    Ok(families.into_iter().collect())
+}
+
 impl TextMeasurer {
-    /// Discovers system fonts through fontique (fontconfig on Linux).
+    /// Discovers system fonts through fontique (fontconfig on Linux), plus
+    /// any added with [`add_fonts`].
     pub fn new() -> TextMeasurer {
+        let mut fcx = FontContext::new();
+        for blob in EXTRA_FONTS.read().unwrap().iter() {
+            fcx.collection.register_fonts(blob.clone(), None);
+        }
         TextMeasurer {
-            fcx: FontContext::new(),
+            fcx,
             lcx: LayoutContext::new(),
             cache: HashMap::new(),
             used: HashSet::new(),

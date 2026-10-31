@@ -40,6 +40,10 @@ struct State {
 pub struct Workspace {
     root: PathBuf,
     images: Vec<PathBuf>,
+    /// `--templates`: read-only designs new_document can copy.
+    templates: Option<PathBuf>,
+    /// Families from `--fonts`.
+    fonts: Vec<String>,
     state: Mutex<State>,
     published: Mutex<Arc<Snapshot>>,
     /// Made on the first render; `Err` is kept so a missing GPU is reported, not retried.
@@ -82,12 +86,31 @@ impl Workspace {
         let ws = Workspace {
             root,
             images,
+            templates: None,
+            fonts: Vec::new(),
             published: Mutex::new(Arc::new(snapshot_of(&state))),
             state: Mutex::new(state),
             gpu: Mutex::new(None),
             notifier: OnceLock::new(),
         };
         Ok(ws)
+    }
+
+    /// Let new_document start from the `.tessel.json` files in `dir` (read
+    /// only; outside the root is fine).
+    pub fn with_templates(mut self, dir: &Path) -> std::io::Result<Workspace> {
+        self.templates = Some(dir.canonicalize()?);
+        Ok(self)
+    }
+
+    /// Make the fonts in `dir` available to this process's text (see
+    /// `layout::text::add_fonts`). Call before the first layout.
+    pub fn with_fonts(mut self, dir: &Path) -> std::io::Result<Workspace> {
+        let added = layout::text::add_fonts(dir)?;
+        self.fonts.extend(added);
+        self.fonts.sort();
+        self.fonts.dedup();
+        Ok(self)
     }
 
     /// Wire up change notification (`Agent::notifier`).
@@ -250,7 +273,59 @@ impl Workspace {
                 json!({ "path": self.shown(p), "title": title })
             })
             .collect();
-        json!({ "root": self.root, "documents": docs })
+        json!({ "root": self.root, "documents": docs, "templates": self.template_list(), "fonts": self.fonts })
+    }
+
+    fn template_list(&self) -> Vec<Value> {
+        let Some(dir) = &self.templates else {
+            return Vec::new();
+        };
+        let mut files: Vec<PathBuf> = std::fs::read_dir(dir)
+            .into_iter()
+            .flatten()
+            .flatten()
+            .filter(|e| e.file_type().is_ok_and(|t| t.is_file()))
+            .map(|e| e.path())
+            .filter(|p| p.to_string_lossy().ends_with(DESIGN_SUFFIX))
+            .collect();
+        files.sort();
+        files
+            .iter()
+            .filter_map(|p| {
+                let name = p.file_name()?.to_string_lossy();
+                let name = name.strip_suffix(DESIGN_SUFFIX)?.to_string();
+                let loaded = doc::load_file(p).ok()?;
+                let meta = &loaded.doc.meta;
+                let frame = loaded.doc.pages.first()?.children.first()?;
+                Some(json!({
+                    "name": name,
+                    "title": meta.title,
+                    "description": meta.extra.get("description").and_then(Value::as_str).unwrap_or_default(),
+                    "width": frame.width,
+                    "height": frame.height,
+                }))
+            })
+            .collect()
+    }
+
+    /// The template file called `name`.
+    fn template_file(&self, name: &str) -> Result<PathBuf, ToolError> {
+        let Some(dir) = &self.templates else {
+            return Err(ToolError::invalid_args(
+                "this workspace has no templates (start the server with --templates)",
+            ));
+        };
+        let plain = !name.is_empty()
+            && name
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_');
+        let file = dir.join(format!("{name}{DESIGN_SUFFIX}"));
+        match file.symlink_metadata() {
+            Ok(m) if plain && m.is_file() => Ok(file),
+            _ => Err(ToolError::invalid_args(format!(
+                "no template {name:?}; list_documents lists them"
+            ))),
+        }
     }
 
     /// Create the folders `path` names inside the root ("acme/sale.tessel.json"
@@ -332,11 +407,23 @@ impl Workspace {
     fn new_document(
         &self,
         path: &str,
-        width: f32,
-        height: f32,
+        template: Option<String>,
+        width: Option<f32>,
+        height: Option<f32>,
         title: Option<String>,
         background: Option<String>,
     ) -> Result<Value, ToolError> {
+        let source = match &template {
+            Some(name) => {
+                if width.is_some() || height.is_some() || background.is_some() {
+                    return Err(ToolError::invalid_args(
+                        "a template has its own size and background; leave out width, height and background",
+                    ));
+                }
+                Some(self.template_file(name)?)
+            }
+            None => None,
+        };
         self.make_folders(path)?;
         let file = self.design_path(path)?;
         if file.symlink_metadata().is_ok() {
@@ -344,6 +431,32 @@ impl Workspace {
                 "{path} already exists; open it instead"
             )));
         }
+        let default_title = || {
+            file.file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .trim_end_matches(DESIGN_SUFFIX)
+                .to_string()
+        };
+        if let Some(source) = source {
+            let mut loaded = doc::load_file(&source)
+                .map_err(|e| ToolError::internal(format!("template: {e}")))?;
+            loaded.doc.meta.title = title.unwrap_or_else(default_title);
+            loaded.doc.meta.extra.remove("description");
+            // The template's images go with it.
+            let assets = Assets::new();
+            assets.load_dir(&assets_dir_for(&source), &loaded.doc);
+            assets
+                .save(&assets_dir_for(&file), &loaded.doc)
+                .and_then(|_| doc::save_file(&file, &loaded.doc))
+                .map_err(|e| ToolError::internal(format!("{path}: {e}")))?;
+            return self.open(path);
+        }
+        let (Some(width), Some(height)) = (width, height) else {
+            return Err(ToolError::invalid_args(
+                "give a template, or width and height for a blank design",
+            ));
+        };
         let ok = |v: f32| v.is_finite() && (1.0..=20_000.0).contains(&v);
         if !ok(width) || !ok(height) {
             return Err(ToolError::invalid_args(
@@ -356,13 +469,7 @@ impl Workspace {
                 "background is not a #rrggbb[aa] color",
             ));
         }
-        let title = title.unwrap_or_else(|| {
-            file.file_name()
-                .unwrap_or_default()
-                .to_string_lossy()
-                .trim_end_matches(DESIGN_SUFFIX)
-                .to_string()
-        });
+        let title = title.unwrap_or_else(default_title);
         let source = json!({
             "format": { "name": "tessel", "version": 1 },
             "meta": { "title": title },
@@ -539,11 +646,12 @@ impl AppHandle for Workspace {
             DocumentCall::Open { path } => self.open(&path),
             DocumentCall::New {
                 path,
+                template,
                 width,
                 height,
                 title,
                 background,
-            } => self.new_document(&path, width, height, title, background),
+            } => self.new_document(&path, template, width, height, title, background),
             DocumentCall::ImportImage { path } => self.import_image(&path),
         }
     }

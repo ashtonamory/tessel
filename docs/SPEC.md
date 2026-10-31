@@ -894,17 +894,28 @@ same tools two ways in, with no window and no display server:
   image's pixels and, where it has them, `text` and `image` (the asset shown).
   The topmost layer under a point is the last one listed whose box holds it;
   a phone uses that to edit what was tapped.
-- **`tessel mcp --headless --root DIR [--images DIR]... [--open FILE]`** serves
+- **`tessel mcp --headless --root DIR [--images DIR]... [--templates DIR]
+  [--fonts DIR]... [--open FILE]`** serves
   the §6.3 tools over stdio on the design files in `DIR`, plus four document
   tools only this mode lists: `list_documents`, `open_document`,
-  `new_document` (one page, one frame named "Design" of the given size; it
-  makes plain subfolders) and `import_image` (a PNG, JPEG, GIF or WebP of at
+  `new_document` (one page, one frame named "Design" of the given size, or a
+  copy of a template and its images; it makes plain subfolders) and `import_image` (a PNG, JPEG, GIF or WebP of at
   most 40 MB, kept in memory until a layer uses it). One document is open at
   a time. Each committed transaction is saved to its file at once (assets
   first, then the document, atomically), so there is no save tool and no
   dirty state. Opening another document bumps the revision, so an
   `if_revision` from the last one fails. `set_selection` is remembered but
   shows nothing.
+
+**Templates** are the `.tessel.json` files directly in `--templates DIR`, read
+only. `list_documents` lists each by `name` (the file name without
+`.tessel.json`) with its title, size, and `meta.description`, a sentence for
+the agent choosing one, which the copy drops. A template whose colours and
+fonts are tokens (`{color.brand}`, `{font.heading}`) takes a brand with one
+`set_tokens`. **`--fonts DIR`** (also on `tessel render`) loads the `.ttf`,
+`.otf` and `.ttc` files in `DIR` as if installed, for this process only;
+`list_documents` lists their families. A family that is neither installed nor
+added still falls back to sans-serif.
 
 Every path is checked against `DIR`: relative paths are relative to it,
 absolute ones must be inside it, and nothing is read or written through `..`,

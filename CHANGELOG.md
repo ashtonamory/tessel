@@ -9,6 +9,12 @@
   `list_documents`, `open_document`, `new_document` and `import_image`, and
   saves each edit at once. Both fall back to software rendering (Mesa's
   lavapipe) where no GPU works.
+- **Templates and fonts, headless.** `--templates DIR` lets `new_document`
+  start from a copy of a template (listed by `list_documents` with a
+  description); `--fonts DIR` uses a folder's fonts as if installed.
+- **`create_node` refuses unknown keys**, as `update_node` always has. A
+  misplaced key (`font_size` beside `style` instead of in it) used to be kept
+  and silently ignored.
 
 ## 0.1.0
 

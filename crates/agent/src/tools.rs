@@ -183,7 +183,9 @@ fn document_defs() -> Vec<ToolDef> {
         def::<EmptyArgs>(
             "list_documents",
             false,
-            "The .tessel.json files in the workspace folder, with their titles.",
+            "The .tessel.json files in the workspace folder, with their titles; the \
+             templates new_document can start from; and the font families added for \
+             this workspace (besides those installed).",
         ),
         def::<OpenDocumentArgs>(
             "open_document",
@@ -194,8 +196,9 @@ fn document_defs() -> Vec<ToolDef> {
         def::<NewDocumentArgs>(
             "new_document",
             false,
-            "Create and open a new .tessel.json file with one page and one frame of the \
-             given size (\"Design\"). Returns the page and frame IDs to build in.",
+            "Create and open a new .tessel.json file: a copy of a template, or one page \
+             with one blank frame of the given size (\"Design\"). Returns the page and \
+             frame IDs to build in.",
         ),
         def::<ImportImageArgs>(
             "import_image",
@@ -252,6 +255,7 @@ pub async fn call<H: AppHandle>(
             }
             "new_document" => parse::<NewDocumentArgs>(args).map(|a| DocumentCall::New {
                 path: a.path,
+                template: a.template,
                 width: a.width,
                 height: a.height,
                 title: a.title,

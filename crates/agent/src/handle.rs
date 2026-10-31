@@ -158,8 +158,9 @@ pub enum DocumentCall {
     },
     New {
         path: String,
-        width: f32,
-        height: f32,
+        template: Option<String>,
+        width: Option<f32>,
+        height: Option<f32>,
         title: Option<String>,
         background: Option<String>,
     },
