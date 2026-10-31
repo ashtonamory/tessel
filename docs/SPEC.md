@@ -879,6 +879,45 @@ Decided: `rmcp` 3.5.1 (features `server`, `transport-io`) with `schemars`
 (`set_selection` included, though it is not a document change), `screenshot`,
 `export_code` and `export_file`.
 
+### 6.7 Headless: no window
+
+An agent on a computer where nobody has the app open (Jackie's Designer, a
+server, a test) still makes and edits designs. The `headless` crate gives the
+same tools two ways in, with no window and no display server:
+
+- **`tessel render FILE`** renders one node (default: the first layer of the
+  first page, which in a design file is its frame) to PNG, JPEG or SVG, by
+  `-o`'s extension or `--format`, at `--scale`. JPEG has no alpha, so it is
+  drawn on `--background` or white. `--layers OUT.json` also writes the
+  **layer map**: the exported node and every visible layer under it, back to
+  front, each with `id`, `name`, `kind`, `parent`, its axis-aligned box in the
+  image's pixels and, where it has them, `text` and `image` (the asset shown).
+  The topmost layer under a point is the last one listed whose box holds it;
+  a phone uses that to edit what was tapped.
+- **`tessel mcp --headless --root DIR [--images DIR]... [--open FILE]`** serves
+  the §6.3 tools over stdio on the design files in `DIR`, plus four document
+  tools only this mode lists: `list_documents`, `open_document`,
+  `new_document` (one page, one frame named "Design" of the given size; it
+  makes plain subfolders) and `import_image` (a PNG, JPEG, GIF or WebP of at
+  most 40 MB, kept in memory until a layer uses it). One document is open at
+  a time. Each committed transaction is saved to its file at once (assets
+  first, then the document, atomically), so there is no save tool and no
+  dirty state. Opening another document bumps the revision, so an
+  `if_revision` from the last one fails. `set_selection` is remembered but
+  shows nothing.
+
+Every path is checked against `DIR`: relative paths are relative to it,
+absolute ones must be inside it, and nothing is read or written through `..`,
+a hidden folder, or a symlink. `import_image` may also read from each
+`--images DIR`. `export_file` writes only inside `DIR`, narrower than the app's
+document-folder-or-`$HOME` rule.
+
+Rendering opens a wgpu device with no surface: the hardware adapter if one
+works, otherwise the fallback adapter, which on Linux is Mesa's lavapipe
+(software Vulkan; `vulkan-swrast` on Arch, `mesa-vulkan-drivers` on Debian
+and Ubuntu). `TESSEL_GPU=software` skips the hardware adapter. With neither,
+PNG and JPEG fail with that advice; SVG needs no GPU.
+
 ---
 
 ## 7. Rendering and performance

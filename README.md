@@ -230,6 +230,31 @@ The status bar shows how many agents are connected and which. Click it to
 disconnect one, or untick "Agents may edit" to make the document read-only to
 agents (they can still read, select and screenshot).
 
+### Without the window
+
+`tessel mcp --headless --root DIR` serves the same tools with no app open, on
+the design files in one folder, for an agent on a server or a computer nobody
+is looking at. It adds `list_documents`, `open_document`, `new_document` and
+`import_image` (`--images DIR` lets it read photos from another folder too),
+saves every edit to its file at once, and never touches anything outside
+`DIR`.
+
+```sh
+claude mcp add tessel-headless -- tessel mcp --headless --root ~/Designs
+```
+
+`tessel render` turns a design file into an image from the command line:
+
+```sh
+tessel render post.tessel.json                      # post.png, the file's frame at 1x
+tessel render post.tessel.json -o post.jpg --scale 2 --layers post.layers.json
+```
+
+`--layers` writes the layer map: every visible layer's box in the image's
+pixels, back to front, so a tap on the image can be traced to a layer. Both
+render on the GPU, or on the CPU through Mesa's lavapipe where there is none
+(`TESSEL_GPU=software` forces it). See [SPEC §6.7](docs/SPEC.md).
+
 ## Exporting
 
 Ctrl+Shift+E (File > Export...) opens the Export window for the selected layer. Pick a format: PNG

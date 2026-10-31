@@ -288,6 +288,7 @@ dependencies = [
  "egui-wgpu",
  "env_logger",
  "export",
+ "headless",
  "image",
  "kurbo",
  "layout",
@@ -1769,6 +1770,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
 dependencies = [
  "foldhash",
+]
+
+[[package]]
+name = "headless"
+version = "0.1.0"
+dependencies = [
+ "agent",
+ "doc",
+ "export",
+ "image",
+ "layout",
+ "log",
+ "pollster 1.0.1",
+ "render",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+ "tokio",
+ "wgpu",
 ]
 
 [[package]]

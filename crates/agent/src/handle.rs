@@ -125,6 +125,47 @@ pub trait AppHandle: Send + Sync + 'static {
         &self,
         req: ExportRequest,
     ) -> impl Future<Output = Result<u64, ToolError>> + Send;
+
+    /// Whether this handle works on files by path and offers the document
+    /// tools (`list_documents`, `open_document`, `new_document`,
+    /// `import_image`): headless mode does (§6.7); the app, with its one open
+    /// document, does not.
+    fn has_documents(&self) -> bool {
+        false
+    }
+
+    /// Run a document tool. Only called when [`AppHandle::has_documents`].
+    fn documents(
+        &self,
+        call: DocumentCall,
+    ) -> impl Future<Output = Result<serde_json::Value, ToolError>> + Send {
+        let _ = call;
+        async {
+            Err(ToolError::invalid_args(
+                "document tools need `tessel mcp --headless`",
+            ))
+        }
+    }
+}
+
+/// A document tool call (headless mode, §6.7). Paths are as the agent gave
+/// them; the handle resolves and checks them.
+#[derive(Clone, Debug, PartialEq)]
+pub enum DocumentCall {
+    List,
+    Open {
+        path: String,
+    },
+    New {
+        path: String,
+        width: f32,
+        height: f32,
+        title: Option<String>,
+        background: Option<String>,
+    },
+    ImportImage {
+        path: String,
+    },
 }
 
 /// The locked node that is `id` or contains it, if any.

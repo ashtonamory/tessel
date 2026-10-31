@@ -16,6 +16,7 @@ layout.workspace = true
 render.workspace = true
 export.workspace = true
 agent.workspace = true
+headless.workspace = true
 tokio.workspace = true
 eframe.workspace = true
 egui.workspace = true

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/doc", "crates/layout", "crates/render", "crates/export", "crates/agent", "crates/app"]
+members = ["crates/doc", "crates/layout", "crates/render", "crates/export", "crates/agent", "crates/headless", "crates/app"]
 
 [workspace.package]
 edition = "2021"
@@ -14,6 +14,7 @@ layout = { path = "crates/layout" }
 render = { path = "crates/render" }
 export = { path = "crates/export" }
 agent = { path = "crates/agent" }
+headless = { path = "crates/headless" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 uuid = { version = "1", features = ["v4"] }
