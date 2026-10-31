@@ -16,7 +16,8 @@ pub mod tools;
 
 pub use error::{ErrorCode, ToolError};
 pub use handle::{
-    check_export_path, check_locked, locked_at, write_export_file, AppHandle, ExportFormat,
-    ExportRequest, Screenshot, ScreenshotRequest, SelectionState, Snapshot, TxOk, TxRequest,
+    check_export_path, check_locked, locked_at, write_export_file, AppHandle, DocumentCall,
+    ExportFormat, ExportRequest, Screenshot, ScreenshotRequest, SelectionState, Snapshot, TxOk,
+    TxRequest,
 };
 pub use server::{Agent, Notifier, ServeError, SessionInfo, DEBOUNCE, DOCUMENT_URI, SELECTION_URI};

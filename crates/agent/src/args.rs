@@ -415,3 +415,38 @@ fn fifty() -> u32 {
 fn max_size() -> u32 {
     1600
 }
+
+// Document tools: headless mode only (`tessel mcp --headless`, §6.7).
+
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct OpenDocumentArgs {
+    /// A `.tessel.json` file inside the workspace folder: relative to it, or
+    /// absolute.
+    pub path: String,
+}
+
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct NewDocumentArgs {
+    /// Where to save it, ending in `.tessel.json`: relative to the workspace
+    /// folder, or absolute inside it. Fails if the file exists.
+    pub path: String,
+    /// The design's size in px, e.g. 1080 x 1350 for a portrait social post.
+    pub width: f32,
+    pub height: f32,
+    /// The document title; default the file name.
+    #[serde(default)]
+    pub title: Option<String>,
+    /// The design frame's fill, `#rrggbb[aa]`; default white.
+    #[serde(default)]
+    pub background: Option<String>,
+}
+
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ImportImageArgs {
+    /// A PNG, JPEG, GIF or WebP file inside the workspace folder or a folder
+    /// the server was given with `--images`.
+    pub path: String,
+}

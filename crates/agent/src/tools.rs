@@ -20,8 +20,8 @@ use serde_json::{json, Map, Value};
 use crate::args::*;
 use crate::error::ToolError;
 use crate::handle::{
-    check_export_path, check_locked, AppHandle, ExportFormat, ExportRequest, ScreenshotRequest,
-    Snapshot, TxOk, TxRequest,
+    check_export_path, check_locked, AppHandle, DocumentCall, ExportFormat, ExportRequest,
+    ScreenshotRequest, Snapshot, TxOk, TxRequest,
 };
 use crate::json::{
     build_node, children_value, file_json, node_json, refresh_ids, round2, summary, summary_tree,
@@ -176,15 +176,60 @@ fn defs() -> Vec<ToolDef> {
     ]
 }
 
-/// The tools for `tools/list`.
+/// The document tools: headless mode only (§6.7). Opening or creating a
+/// document is not an edit of it, so none is refused in read-only mode.
+fn document_defs() -> Vec<ToolDef> {
+    vec![
+        def::<EmptyArgs>(
+            "list_documents",
+            false,
+            "The .tessel.json files in the workspace folder, with their titles.",
+        ),
+        def::<OpenDocumentArgs>(
+            "open_document",
+            false,
+            "Open a .tessel.json file from the workspace folder. Every other tool then \
+             works on it, and each edit is saved to it at once.",
+        ),
+        def::<NewDocumentArgs>(
+            "new_document",
+            false,
+            "Create and open a new .tessel.json file with one page and one frame of the \
+             given size (\"Design\"). Returns the page and frame IDs to build in.",
+        ),
+        def::<ImportImageArgs>(
+            "import_image",
+            false,
+            "Add a photo or logo to the open document. Returns its `asset` and natural \
+             size; place it with create_node (kind \"image\", `asset`) or as an image fill.",
+        ),
+    ]
+}
+
+/// The tools for `tools/list` in the app.
 pub fn list() -> Vec<Tool> {
+    list_for(false)
+}
+
+/// The tools for `tools/list`, with the document tools when the handle has
+/// them.
+pub fn list_for(documents: bool) -> Vec<Tool> {
+    let extra = if documents {
+        document_defs()
+    } else {
+        Vec::new()
+    };
     defs()
         .into_iter()
+        .chain(extra)
         .map(|d| {
             let annotations = if d.mutating {
                 ToolAnnotations::new().read_only(false).destructive(false)
             } else {
-                ToolAnnotations::new().read_only(d.name != "export_file")
+                ToolAnnotations::new().read_only(!matches!(
+                    d.name,
+                    "export_file" | "new_document" | "import_image"
+                ))
             };
             Tool::new(d.name, d.description, (d.schema)()).with_annotations(annotations)
         })
@@ -199,6 +244,29 @@ pub async fn call<H: AppHandle>(
     name: &str,
     args: Value,
 ) -> Option<Result<ToolOutput, ToolError>> {
+    if app.has_documents() && document_defs().iter().any(|d| d.name == name) {
+        let call = match name {
+            "list_documents" => parse::<EmptyArgs>(args).map(|_| DocumentCall::List),
+            "open_document" => {
+                parse::<OpenDocumentArgs>(args).map(|a| DocumentCall::Open { path: a.path })
+            }
+            "new_document" => parse::<NewDocumentArgs>(args).map(|a| DocumentCall::New {
+                path: a.path,
+                width: a.width,
+                height: a.height,
+                title: a.title,
+                background: a.background,
+            }),
+            "import_image" => {
+                parse::<ImportImageArgs>(args).map(|a| DocumentCall::ImportImage { path: a.path })
+            }
+            _ => unreachable!("every document tool is dispatched"),
+        };
+        return Some(match call {
+            Ok(call) => app.documents(call).await.map(ToolOutput::Json),
+            Err(e) => Err(e),
+        });
+    }
     let d = defs().into_iter().find(|d| d.name == name)?;
     if d.mutating && read_only {
         return Some(Err(ToolError::read_only()));

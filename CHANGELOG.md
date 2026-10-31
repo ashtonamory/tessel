@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- **Headless.** `tessel render FILE` renders a design file to PNG, JPEG or
+  SVG with no window, with an optional layer map (`--layers`) of every
+  visible layer's box in the image's pixels. `tessel mcp --headless --root
+  DIR` serves the agent tools on the design files in one folder, adds
+  `list_documents`, `open_document`, `new_document` and `import_image`, and
+  saves each edit at once. Both fall back to software rendering (Mesa's
+  lavapipe) where no GPU works.
+
 ## 0.1.0
 
 The first release. See [docs/SPEC.md](docs/SPEC.md) for the full design.

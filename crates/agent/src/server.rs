@@ -359,7 +359,9 @@ impl<H: AppHandle> ServerHandler for Session<H> {
         _request: Option<PaginatedRequestParams>,
         _context: RequestContext<RoleServer>,
     ) -> Result<ListToolsResult, McpError> {
-        Ok(ListToolsResult::with_all_items(tools::list()))
+        Ok(ListToolsResult::with_all_items(tools::list_for(
+            self.shared.app.has_documents(),
+        )))
     }
 
     async fn call_tool(
