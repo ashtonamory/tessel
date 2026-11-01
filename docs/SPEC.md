@@ -900,7 +900,8 @@ same tools two ways in, with no window and no display server:
   tools only this mode lists: `list_documents`, `open_document`,
   `new_document` (one page, one frame named "Design" of the given size, or a
   copy of a template and its images; it makes plain subfolders) and `import_image` (a PNG, JPEG, GIF or WebP of at
-  most 40 MB, kept in memory until a layer uses it). One document is open at
+  most 40 MB, kept in memory until a layer uses it; `scale` 2 to 12 enlarges pixel art
+  by that much with nearest neighbour and keeps it as a PNG, at most 8192 pixels a side). One document is open at
   a time. Each committed transaction is saved to its file at once (assets
   first, then the document, atomically), so there is no save tool and no
   dirty state. Opening another document bumps the revision, so an

@@ -24,6 +24,10 @@ use crate::render::{render, Format, RenderOptions};
 pub const DESIGN_SUFFIX: &str = ".tessel.json";
 /// The largest image `import_image` takes.
 pub const MAX_IMAGE_BYTES: u64 = 40 * 1024 * 1024;
+/// `import_image`'s largest `scale` for pixel art.
+pub const MAX_PIXEL_SCALE: u32 = 12;
+/// A scaled image's largest side, in pixels.
+const MAX_SCALED_SIDE: u32 = 8192;
 /// `list_documents` stops after this many files.
 const MAX_LISTED: usize = 500;
 
@@ -486,7 +490,14 @@ impl Workspace {
         self.open(path)
     }
 
-    fn import_image(&self, path: &str) -> Result<Value, ToolError> {
+    fn import_image(&self, path: &str, scale: Option<u32>) -> Result<Value, ToolError> {
+        if let Some(n) = scale {
+            if !(2..=MAX_PIXEL_SCALE).contains(&n) {
+                return Err(ToolError::invalid_args(format!(
+                    "scale: a whole number from 2 to {MAX_PIXEL_SCALE}, or leave it out"
+                )));
+            }
+        }
         let mut bases: Vec<&Path> = vec![&self.root];
         bases.extend(self.images.iter().map(PathBuf::as_path));
         let file = self.inside(path, &bases)?;
@@ -505,10 +516,18 @@ impl Workspace {
         let (width, height) = render::natural_size(&bytes).ok_or_else(|| {
             ToolError::invalid_args(format!("{path}: not a PNG, JPEG, GIF or WebP image"))
         })?;
-        let ext = file
+        let mut ext = file
             .extension()
             .map(|e| e.to_string_lossy().to_ascii_lowercase())
             .unwrap_or_default();
+        let (bytes, width, height) = match scale {
+            Some(n) => {
+                let (big, w, h) = pixel_scale(&bytes, n, path)?;
+                ext = "png".into();
+                (big, w, h)
+            }
+            None => (bytes, width, height),
+        };
         // Kept in memory until a layer uses it; the save after that edit writes it.
         let asset = self.state.lock().unwrap().assets.add(bytes, &ext);
         Ok(json!({ "asset": asset.0, "width": width, "height": height }))
@@ -652,7 +671,27 @@ impl AppHandle for Workspace {
                 title,
                 background,
             } => self.new_document(&path, template, width, height, title, background),
-            DocumentCall::ImportImage { path } => self.import_image(&path),
+            DocumentCall::ImportImage { path, scale } => self.import_image(&path, scale),
         }
     }
+}
+
+/// Pixel art enlarged `n` times with nearest neighbour, as a PNG, and its size.
+fn pixel_scale(bytes: &[u8], n: u32, path: &str) -> Result<(Vec<u8>, u32, u32), ToolError> {
+    let img = image::load_from_memory(bytes)
+        .map_err(|e| ToolError::invalid_args(format!("{path}: {e}")))?
+        .to_rgba8();
+    let (w, h) = (img.width() * n, img.height() * n);
+    if w > MAX_SCALED_SIDE || h > MAX_SCALED_SIDE {
+        return Err(ToolError::invalid_args(format!(
+            "{path}: {}x{} times {n} is over {MAX_SCALED_SIDE} pixels a side; use a smaller scale",
+            img.width(),
+            img.height()
+        )));
+    }
+    let big = image::imageops::resize(&img, w, h, image::imageops::FilterType::Nearest);
+    let mut out = std::io::Cursor::new(Vec::new());
+    big.write_to(&mut out, image::ImageFormat::Png)
+        .map_err(|e| ToolError::invalid_args(format!("{path}: {e}")))?;
+    Ok((out.into_inner(), w, h))
 }
