@@ -204,7 +204,9 @@ fn document_defs() -> Vec<ToolDef> {
             "import_image",
             false,
             "Add a photo or logo to the open document. Returns its `asset` and natural \
-             size; place it with create_node (kind \"image\", `asset`) or as an image fill.",
+             size; place it with create_node (kind \"image\", `asset`) or as an image fill. \
+             For pixel art pass `scale` (2 to 12): the image is enlarged by that much with \
+             nearest neighbour and placed at its returned size, never resized smoothly.",
         ),
     ]
 }
@@ -261,9 +263,10 @@ pub async fn call<H: AppHandle>(
                 title: a.title,
                 background: a.background,
             }),
-            "import_image" => {
-                parse::<ImportImageArgs>(args).map(|a| DocumentCall::ImportImage { path: a.path })
-            }
+            "import_image" => parse::<ImportImageArgs>(args).map(|a| DocumentCall::ImportImage {
+                path: a.path,
+                scale: a.scale,
+            }),
             _ => unreachable!("every document tool is dispatched"),
         };
         return Some(match call {

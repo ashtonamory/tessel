@@ -231,6 +231,58 @@ async fn imported_images_are_saved_once_a_layer_uses_them() {
     assert!(root.join("post.assets").join(asset).is_file());
 }
 
+#[tokio::test]
+async fn pixel_art_is_enlarged_with_nearest_neighbour() {
+    let root = temp_dir("pixels");
+    let art = temp_dir("art");
+    // Two pixels side by side: red, then blue.
+    let mut img = image::RgbaImage::from_pixel(2, 1, image::Rgba([255, 0, 0, 255]));
+    img.put_pixel(1, 0, image::Rgba([0, 0, 255, 255]));
+    img.save(art.join("sprite.png")).unwrap();
+    let ws = Workspace::new(&root, std::slice::from_ref(&art)).unwrap();
+    let made = call(
+        &ws,
+        "new_document",
+        json!({ "path": "site.tessel.json", "width": 100, "height": 100 }),
+    )
+    .await
+    .unwrap();
+    let path = art.join("sprite.png");
+    let got = call(
+        &ws,
+        "import_image",
+        json!({ "path": path.to_str().unwrap(), "scale": 4 }),
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        (got["width"].clone(), got["height"].clone()),
+        (json!(8), json!(4))
+    );
+    for bad in [json!(1), json!(13), json!(0)] {
+        let refused = call(
+            &ws,
+            "import_image",
+            json!({ "path": path.to_str().unwrap(), "scale": bad }),
+        )
+        .await
+        .unwrap_err();
+        assert!(refused.contains("scale"), "{refused}");
+    }
+    // Placed, it is saved as the enlarged PNG: every pixel is its source's colour, with no blend at the seam.
+    let frame = made["pages"][0]["children"][0]["id"].as_str().unwrap();
+    let asset = got["asset"].as_str().unwrap();
+    call(&ws, "create_node", json!({ "parent_id": frame, "node": { "kind": "image", "asset": asset, "width": 8, "height": 4 } }))
+        .await
+        .unwrap();
+    let saved = image::open(root.join("site.assets").join(asset))
+        .unwrap()
+        .to_rgba8();
+    assert_eq!(saved.dimensions(), (8, 4));
+    assert_eq!(saved.get_pixel(3, 2).0, [255, 0, 0, 255]);
+    assert_eq!(saved.get_pixel(4, 2).0, [0, 0, 255, 255]);
+}
+
 const TEMPLATE: &str = r##"{
   "format": { "name": "tessel", "version": 1 },
   "meta": { "title": "Big sale", "description": "One photo, a headline and a price." },

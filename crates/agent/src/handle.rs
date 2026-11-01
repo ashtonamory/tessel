@@ -166,6 +166,7 @@ pub enum DocumentCall {
     },
     ImportImage {
         path: String,
+        scale: Option<u32>,
     },
 }
 

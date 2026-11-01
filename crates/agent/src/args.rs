@@ -456,4 +456,9 @@ pub struct ImportImageArgs {
     /// A PNG, JPEG, GIF or WebP file inside the workspace folder or a folder
     /// the server was given with `--images`.
     pub path: String,
+    /// Pixel art: a whole number from 2 to 12 that enlarges the image by that
+    /// much with nearest neighbour, so every pixel stays a crisp square.
+    /// Leave it out for photos.
+    #[serde(default)]
+    pub scale: Option<u32>,
 }

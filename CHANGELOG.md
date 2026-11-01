@@ -12,6 +12,8 @@
 - **Templates and fonts, headless.** `--templates DIR` lets `new_document`
   start from a copy of a template (listed by `list_documents` with a
   description); `--fonts DIR` uses a folder's fonts as if installed.
+- **Pixel art.** `import_image` takes `scale` (2 to 12): the image is enlarged
+  with nearest neighbour, so every pixel stays a crisp square at any size.
 - **`create_node` refuses unknown keys**, as `update_node` always has. A
   misplaced key (`font_size` beside `style` instead of in it) used to be kept
   and silently ignored.
