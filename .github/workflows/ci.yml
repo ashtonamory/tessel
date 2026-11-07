@@ -27,3 +27,33 @@ jobs:
       - run: cargo fmt --all --check
       - run: cargo clippy --workspace --all-targets -- -D warnings
       - run: cargo test --workspace
+
+  # A fresh Arch (Omarchy) machine following the README quick start: only the
+  # README packages, rustup, then scripts/install.sh, then a render on the
+  # software Vulkan driver (lavapipe), as on a computer with no GPU.
+  arch-install:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install the README packages
+        run: |
+          pacman -Syu --noconfirm --needed git base-devel pkgconf wayland \
+            libxkbcommon fontconfig libx11 libxcursor libxi libxrandr libxcb \
+            vulkan-icd-loader xdg-desktop-portal xdg-desktop-portal-gtk \
+            inter-font vulkan-swrast rustup desktop-file-utils shared-mime-info
+      - uses: actions/checkout@v4
+      - name: install.sh stops with a clear message when Rust is missing
+        run: |
+          if scripts/install.sh 2>err.txt; then exit 1; fi
+          cat err.txt
+          grep -q "cannot run\|not installed" err.txt
+      - run: rustup default stable
+      - name: scripts/install.sh
+        run: scripts/install.sh
+      - name: Smoke test the installed binary
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          tessel --version
+          tessel render crates/doc/tests/fixtures/spec_example.tessel.json -o out.png
+          test -s out.png
+          test -f "$HOME/.local/share/applications/tessel.desktop"

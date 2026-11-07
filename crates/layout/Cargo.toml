@@ -3,6 +3,7 @@ name = "layout"
 description = "tessel geometry: auto-layout (taffy), absolute node bounds, text measurement and hit-testing"
 edition.workspace = true
 version.workspace = true
+rust-version.workspace = true
 license.workspace = true
 publish.workspace = true
 
