@@ -355,3 +355,14 @@ fn radius_tokens_change_the_drawn_corner() {
     assert_eq!(corner, [255, 255, 255, 255], "rounded away by the token");
     assert_eq!(centre, [255, 0, 0, 255]);
 }
+
+#[test]
+fn self_test_passes_on_a_working_device() {
+    let Some(mut gpu) = gpu() else { return };
+    let Gpu {
+        device,
+        queue,
+        renderer,
+    } = gpu.as_mut().unwrap();
+    renderer.self_test(device, queue).unwrap();
+}

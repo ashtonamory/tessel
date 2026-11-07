@@ -65,7 +65,12 @@ fn try_adapter(instance: &wgpu::Instance, fallback: bool) -> Result<Gpu, String>
     let (device, queue) =
         pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
             .map_err(|e| e.to_string())?;
-    let renderer = SceneRenderer::new(&device).map_err(|e| e.to_string())?;
+    let mut renderer = SceneRenderer::new(&device).map_err(|e| e.to_string())?;
+    // A driver that cannot compile vello's shaders draws blank images
+    // without an error; on such a device, move on to the software adapter.
+    renderer
+        .self_test(&device, &queue)
+        .map_err(|e| format!("{}: {e}", info.name))?;
     Ok(Gpu {
         device,
         queue,

@@ -43,6 +43,7 @@ fn main() -> ExitCode {
         }
     }
 
+    app::gpu_mode::apply(app::gpu_mode::software_requested());
     match app::app::run(file) {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {

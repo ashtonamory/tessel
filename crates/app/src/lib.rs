@@ -13,6 +13,7 @@ pub mod components;
 pub mod components_panel;
 pub mod editor;
 pub mod export_window;
+pub mod gpu_mode;
 pub mod guides;
 pub mod inspector;
 pub mod instance_inspector;

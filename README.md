@@ -114,6 +114,17 @@ MIME type (`*.tessel.json`), refreshes the desktop and MIME databases and makes
 the app the default opener for those files. `DESTDIR` stages the install
 without touching the databases. Make sure `$PREFIX/bin` is on your `PATH`.
 
+### If the canvas stays blank
+
+Some graphics drivers cannot compile the shaders the canvas uses, for example
+nouveau (the open-source NVIDIA driver) on older GPUs such as the GeForce GT
+750M. Tessel draws a small test image when it starts; if that fails, the canvas
+says so and offers **Restart with software rendering**, which draws on the CPU
+with Mesa's llvmpipe. It is slower, but works on any computer, and Tessel
+remembers the choice in `$XDG_CONFIG_HOME/tessel/gpu` (delete that file to go
+back to the GPU). For one run, `TESSEL_GPU=software tessel` forces software
+rendering and `TESSEL_GPU=hardware tessel` ignores the remembered choice.
+
 ## Controls
 
 **Tools** (also in the toolbar): Move `V`, Frame `F`, Rectangle `R`,
