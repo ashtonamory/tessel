@@ -3,6 +3,7 @@ name = "headless"
 description = "tessel without a window: render files and serve the agent tools over them"
 edition.workspace = true
 version.workspace = true
+rust-version.workspace = true
 license.workspace = true
 publish.workspace = true
 

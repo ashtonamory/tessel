@@ -3,6 +3,7 @@ name = "app"
 description = "tessel desktop app"
 edition.workspace = true
 version.workspace = true
+rust-version.workspace = true
 license.workspace = true
 publish.workspace = true
 

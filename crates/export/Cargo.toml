@@ -3,6 +3,7 @@ name = "export"
 description = "tessel export: PNG, SVG, code and tokens"
 edition.workspace = true
 version.workspace = true
+rust-version.workspace = true
 license.workspace = true
 publish.workspace = true
 

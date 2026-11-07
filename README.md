@@ -31,14 +31,32 @@ Crates:
 - `crates/app`: the `tessel` binary (eframe/egui), which hosts the
   MCP server, and its `tessel mcp` stdio bridge.
 
+## Quick start on Omarchy
+
+A stock Omarchy install has everything Tessel needs except the Rust toolchain
+and the Inter font (the default font of new text). From a terminal:
+
+```sh
+omarchy-install-dev-env rust          # Rust via rustup; open a new terminal after
+sudo pacman -S --needed inter-font
+git clone https://github.com/ashtonamory/tessel && cd tessel
+scripts/install.sh
+```
+
+Then open "Tessel" from the launcher. The first build downloads about 350 MB
+of crates, needs about 2 GB of free disk and takes a few minutes (longer on a
+laptop). `scripts/install.sh` checks the toolchain first and tells you what to
+install if anything is missing.
+
 ## Requirements
 
 Tessel runs on **Linux only**, on Wayland or X11 (it uses unix sockets for the
 agent link, so other platforms are not supported). You need a Rust toolchain
-(stable, installed with [rustup](https://rustup.rs)), a Vulkan-capable GPU
-driver (the canvas draws with vello on wgpu), and these system packages. The
-names below are for Debian/Ubuntu and Arch; other distributions have
-equivalents.
+(stable, 1.95 or newer, installed with [rustup](https://rustup.rs); on
+Omarchy `omarchy-install-dev-env rust`, on Arch `pacman -S rustup` then
+`rustup default stable`), a Vulkan-capable GPU driver (the canvas draws with
+vello on wgpu), and these system packages. The names below are for
+Debian/Ubuntu and Arch; other distributions have equivalents.
 
 Debian/Ubuntu:
 
@@ -54,11 +72,12 @@ Arch (Omarchy), where the development headers ship with the runtime packages:
 ```sh
 sudo pacman -S --needed base-devel pkgconf wayland libxkbcommon fontconfig \
   libx11 libxcursor libxi libxrandr libxcb vulkan-icd-loader \
-  xdg-desktop-portal xdg-desktop-portal-gtk
+  xdg-desktop-portal xdg-desktop-portal-gtk inter-font
 ```
 
 Also install a Vulkan driver for your GPU (`vulkan-radeon`, `vulkan-intel` or
-`nvidia-utils`) and, for the file dialogs, the portal backend for your
+`nvidia-utils`; on a machine with no GPU driver, such as a virtual machine,
+`vulkan-swrast` for Mesa's software renderer lavapipe) and, for the file dialogs, the portal backend for your
 desktop instead of `-gtk` if you prefer (for example
 `xdg-desktop-portal-hyprland`). The Vulkan loader and driver are a run-time
 requirement on both distributions.
@@ -75,7 +94,7 @@ requirement on both distributions.
 ## Build and run
 
 ```sh
-git clone https://github.com/sasukevibes/tessel tessel && cd tessel
+git clone https://github.com/ashtonamory/tessel && cd tessel
 cargo run --release -p app -- [FILE.tessel.json]
 ```
 
@@ -88,7 +107,8 @@ scripts/install.sh --dry-run    # print what it would do
 scripts/uninstall.sh            # remove it again
 ```
 
-It builds offline (falling back to a normal build if that fails), installs the
+It checks the Rust toolchain and build tools, builds (offline when every
+crate is already downloaded), installs the
 binary, the `.desktop` entry, the icon and the `application/x-tessel`
 MIME type (`*.tessel.json`), refreshes the desktop and MIME databases and makes
 the app the default opener for those files. `DESTDIR` stages the install
