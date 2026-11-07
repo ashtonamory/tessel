@@ -16,6 +16,11 @@ pub enum RenderError {
     Unsupported(String),
     #[error("wgpu: {0}")]
     Wgpu(String),
+    #[error(
+        "the graphics driver ran vello's shaders but drew nothing correct \
+         ({0}); its shader compiler likely does not support them"
+    )]
+    SelfTest(String),
 }
 
 /// The vello target format.
@@ -54,6 +59,49 @@ impl SceneRenderer {
         Ok(SceneRenderer {
             renderer: renderer?,
         })
+    }
+
+    /// Draw a tiny known picture and read it back (§7.2). Some drivers
+    /// accept vello's shaders without an error yet fail to compile them
+    /// (nouveau on Kepler GPUs logs "shader translation failed"), which
+    /// leaves every render blank. Call this once after [`SceneRenderer::new`]
+    /// so such a device is reported instead of drawing a white canvas.
+    pub fn self_test(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> Result<(), RenderError> {
+        const SIZE: u32 = 16;
+        let mut scene = Scene::new();
+        scene.fill(
+            peniko::Fill::NonZero,
+            vello::kurbo::Affine::IDENTITY,
+            Color::from_rgb8(255, 0, 0),
+            None,
+            &vello::kurbo::Rect::new(0.0, 0.0, f64::from(SIZE / 2), f64::from(SIZE)),
+        );
+        let px = self.render_to_rgba(
+            device,
+            queue,
+            &scene,
+            SIZE,
+            SIZE,
+            Color::from_rgb8(0, 0, 255),
+        )?;
+        let at = |x: u32, y: u32| {
+            let i = ((y * SIZE + x) * 4) as usize;
+            [px[i], px[i + 1], px[i + 2], px[i + 3]]
+        };
+        let close =
+            |got: [u8; 4], want: [u8; 4]| got.iter().zip(want).all(|(g, w)| g.abs_diff(w) <= 8);
+        let (left, right) = (at(3, 8), at(12, 8));
+        if close(left, [255, 0, 0, 255]) && close(right, [0, 0, 255, 255]) {
+            Ok(())
+        } else {
+            Err(RenderError::SelfTest(format!(
+                "expected red and blue, got {left:?} and {right:?}"
+            )))
+        }
     }
 
     /// Render `scene` into `target`.

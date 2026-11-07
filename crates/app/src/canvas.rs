@@ -253,6 +253,8 @@ pub struct Canvas {
     /// Where to draw the rotate cursor this frame.
     rotate_cursor: Option<Pos2>,
     gpu: Gpu,
+    /// The result of the "Restart with software rendering" button.
+    gpu_notice: Option<String>,
     scenes: SceneCache,
     last_render: Option<RenderKey>,
     /// Fit the content into view on the next frame.
@@ -281,6 +283,7 @@ impl Canvas {
             measures: Vec::new(),
             rotate_cursor: None,
             gpu: Gpu::Uninit,
+            gpu_notice: None,
             scenes: SceneCache::new(),
             last_render: None,
             fit_pending: true,
@@ -1208,7 +1211,12 @@ impl Canvas {
     /// Create the vello renderer on the app's device, once.
     fn start_gpu(&mut self, rs: &egui_wgpu::RenderState) {
         if let Gpu::Uninit = self.gpu {
-            self.gpu = match SceneRenderer::new(&rs.device) {
+            let info = rs.adapter.get_info();
+            let started = SceneRenderer::new(&rs.device).and_then(|mut r| {
+                r.self_test(&rs.device, &rs.queue)?;
+                Ok(r)
+            });
+            self.gpu = match started {
                 Ok(renderer) => {
                     let renderer = Box::new(renderer);
                     if rs.adapter.get_info().backend != wgpu::Backend::Vulkan {
@@ -1223,8 +1231,9 @@ impl Canvas {
                     }
                 }
                 Err(e) => {
-                    tracing::error!("cannot start the vello renderer: {e}");
-                    Gpu::Failed(e.to_string())
+                    let e = format!("{} ({:?}): {e}", info.name, info.backend);
+                    tracing::error!("cannot start the vello renderer on {e}");
+                    Gpu::Failed(e)
                 }
             };
         }
@@ -1261,6 +1270,52 @@ impl Canvas {
         export::export_png(&ed.doc, &ed.geometry, id, opts, &mut gpu).map_err(|e| e.to_string())
     }
 
+    /// The canvas when the GPU cannot draw it: why, and a way out.
+    fn paint_gpu_failure(&mut self, ui: &mut Ui, ed: &Editor, rect: Rect, software: bool) {
+        let why = self.gpu_error().unwrap_or("").to_string();
+        let mut child = ui.new_child(
+            egui::UiBuilder::new()
+                .max_rect(rect.shrink(32.0))
+                .layout(egui::Layout::top_down(egui::Align::Center)),
+        );
+        child.add_space((rect.height() * 0.3).max(0.0));
+        child.label(
+            egui::RichText::new("The canvas cannot be drawn on this graphics driver.")
+                .size(16.0)
+                .color(Color32::LIGHT_RED),
+        );
+        child.add(egui::Label::new(egui::RichText::new(why).small().color(Color32::GRAY)).wrap());
+        child.add_space(12.0);
+        if software {
+            child.label("Software rendering is already on, and it failed too.");
+            return;
+        }
+        child.label(
+            "Software rendering draws on the CPU instead. It is slower, but works \
+             on any computer. Tessel remembers the choice.",
+        );
+        child.add_space(8.0);
+        if child.button("Restart with software rendering").clicked() {
+            let saved = crate::gpu_mode::save_software();
+            self.gpu_notice = Some(match saved {
+                Err(e) => format!("Could not save the setting: {e}"),
+                Ok(()) if ed.is_dirty() => {
+                    "Saved. Save your document, then close and reopen Tessel.".to_string()
+                }
+                Ok(()) => match crate::gpu_mode::relaunch_software(ed.path.as_deref()) {
+                    Ok(()) => {
+                        ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+                        "Restarting...".to_string()
+                    }
+                    Err(e) => format!("Saved, but could not restart ({e}). Reopen Tessel."),
+                },
+            });
+        }
+        if let Some(n) = &self.gpu_notice {
+            child.label(n.as_str());
+        }
+    }
+
     fn paint_document(&mut self, ui: &mut Ui, frame: &eframe::Frame, ed: &Editor, rect: Rect) {
         let painter = ui.painter_at(rect);
         let Some(rs) = frame.wgpu_render_state() else {
@@ -1275,16 +1330,8 @@ impl Canvas {
         };
         self.start_gpu(rs);
         let Gpu::Ready { renderer, target } = &mut self.gpu else {
-            painter.text(
-                rect.center(),
-                egui::Align2::CENTER_CENTER,
-                format!(
-                    "Canvas renderer unavailable: {}",
-                    self.gpu_error().unwrap_or("")
-                ),
-                FontId::proportional(14.0),
-                Color32::LIGHT_RED,
-            );
+            let software = rs.adapter.get_info().device_type == wgpu::DeviceType::Cpu;
+            self.paint_gpu_failure(ui, ed, rect, software);
             return;
         };
         let ppp = ui.ctx().pixels_per_point();
