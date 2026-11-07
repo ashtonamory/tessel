@@ -195,12 +195,14 @@ or another editor), it reloads silently when you have no edits and asks
 
 ## Agents (MCP)
 
-Every window runs an MCP server for coding agents such as Claude Code. It
-listens only on a unix socket, `$XDG_RUNTIME_DIR/tessel/<pid>.sock`
+Every window runs an MCP server for coding agents such as Claude Code, Codex
+and Pi. It listens only on a unix socket, `$XDG_RUNTIME_DIR/tessel/<pid>.sock`
 (mode 0600 in a 0700 directory, so only you can connect), and
 `current.sock` beside it points at the window you focused last. Agents
-reach it through `tessel mcp`, a stdio bridge. Register it once with
-Claude Code:
+reach it through `tessel mcp`, a stdio bridge. Register it once with your
+agent, start a new session, and the 20 Tessel tools are there.
+
+### Claude Code
 
 ```sh
 claude mcp add tessel -- tessel mcp
@@ -217,6 +219,40 @@ which writes:
 ```json
 { "mcpServers": { "tessel": { "command": "tessel", "args": ["mcp"] } } }
 ```
+
+Check it with `/mcp` in a session.
+
+### Codex
+
+```sh
+codex mcp add tessel --env XDG_RUNTIME_DIR=/run/user/$(id -u) -- tessel mcp
+```
+
+Codex starts MCP servers with a reduced environment that leaves out
+`XDG_RUNTIME_DIR`, so without `--env` the bridge looks for the socket in the
+wrong place and reports that Tessel is not running. The command writes this to
+`~/.codex/config.toml` (your user id in place of `1000`):
+
+```toml
+[mcp_servers.tessel]
+command = "tessel"
+args = ["mcp"]
+env = { XDG_RUNTIME_DIR = "/run/user/1000" }
+```
+
+Check it with `/mcp` in a session.
+
+### Pi
+
+```sh
+pi mcp add tessel -- tessel mcp
+```
+
+This writes `~/.pi/agent/mcp.json` (`-l` writes the project's `.pi/mcp.json`
+instead). Check it with `pi mcp list`, which should show `tessel: connected,
+20 tools`.
+
+### Options
 
 The bridge connects to the most recently focused window. To pick another,
 pass `--file PATH` (the window that has that document open), `--pid PID` or
@@ -262,7 +298,11 @@ that folder, and `--fonts DIR` uses the fonts in a folder as if installed.
 
 ```sh
 claude mcp add tessel-headless -- tessel mcp --headless --root ~/Designs
+codex mcp add tessel-headless -- tessel mcp --headless --root ~/Designs
+pi mcp add tessel-headless -- tessel mcp --headless --root ~/Designs
 ```
+
+Headless mode needs no window, so Codex needs no `--env` here.
 
 `tessel render` turns a design file into an image from the command line:
 
