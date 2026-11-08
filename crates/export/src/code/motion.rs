@@ -138,33 +138,33 @@ pub(crate) fn css(els: &[MotionEl], prefix: &str, value: &dyn Fn(&Val) -> String
                     all.push(anim);
                 }
                 Motion::Parallax { speed } => {
-                    // On the page's scroll timeline, from when the element
-                    // enters the viewport (scroll 0 if it starts in view, so
-                    // the top of the page is the design) until it has left.
-                    // Moving down by (1 - speed) of the scroll makes it go at
-                    // `speed` times the scroll. Slow ones take longer to
-                    // leave: the range is the distance divided by the speed.
+                    // On the page's scroll timeline. The node is at its
+                    // design position when its centre is at the viewport's
+                    // centre, or at scroll 0 if it is already there or
+                    // above (so the top of the page is the design). From
+                    // there it moves down by (1 - speed) of the scroll, so
+                    // it goes at `speed` times the scroll. The range runs
+                    // from when it enters the viewport to a screen after it
+                    // would have left; the offset is linear in the scroll,
+                    // so the range only bounds it.
                     let k = 1.0 - *speed as f64;
                     if k.abs() < 1e-9 {
                         continue;
                     }
                     let name = format!("{cls}-parallax");
+                    let zero = format!("max(0px, {} - 50vh)", px(el.top + el.height / 2.0));
                     let start = format!("max(0px, {} - 100vh)", px(el.top));
-                    let travel = format!(
-                        "({} - {start}) / {}",
-                        px(el.top + el.height),
-                        num((*speed as f64).max(0.25))
-                    );
+                    let end = format!("calc({} + 100vh)", px(el.top + el.height));
+                    let k = num(k);
                     let _ = writeln!(
                         out,
-                        "\n@keyframes {name} {{\n  from {{ translate: 0 0; }}\n  to {{ translate: 0 calc({} * {travel}); }}\n}}",
-                        num(k)
+                        "\n@keyframes {name} {{\n  from {{ translate: 0 calc({k} * ({start} - {zero})); }}\n  to {{ translate: 0 calc({k} * ({end} - {zero})); }}\n}}"
                     );
                     all.push(Anim {
                         name,
                         timing: "linear both".into(),
                         timeline: "scroll(root)".into(),
-                        range: format!("{start} calc({start} + {travel})"),
+                        range: format!("{start} {end}"),
                         composition: "add",
                     });
                 }

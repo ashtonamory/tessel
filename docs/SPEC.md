@@ -1381,7 +1381,7 @@ effects, and saves them unchanged.
 
 | Effect | CSS |
 | ------ | --- |
-| `parallax` | `animation-timeline: scroll(root)` (the page), from the scroll at which the node enters the viewport, `S = max(0px, top - 100vh)` (0 for a node in the first screen, so the top of the page is the design), over `D = (top + height - S) / max(speed, 0.25)`; `translate` goes from 0 to `(1 - speed) * D`, so the node moves at `speed` times the scroll. `top` is the node's offset in the exported frame. |
+| `parallax` | `animation-timeline: scroll(root)` (the page). The node is at its design position when its centre is at the viewport's centre, `Z = max(0px, top + height/2 - 50vh)` (0 for a node in the upper half of the first screen, so the top of the page is the design); `translate` is `(1 - speed) * (scroll - Z)`, so it moves at `speed` times the scroll. The range runs from `max(0px, top - 100vh)` (entering the viewport) to `top + height + 100vh`. `top` is the node's offset in the exported frame. |
 | `reveal` | `animation-timeline: view()`, `animation-range: entry`, fill `backwards`, a keyframe rule with only `from` (the offset or faded state), so it ends at the node's own values |
 | `hover` | `transition` on the changed properties, plus `:hover` (and `:focus-visible`) rules |
 | `loop` | `@keyframes` with `animation: … infinite alternate` (`spin` is not alternated) |

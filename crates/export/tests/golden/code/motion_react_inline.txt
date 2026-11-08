@@ -24,8 +24,8 @@ export default function Landing() {
 }
 
 @keyframes motion-blob-parallax {
-  from { translate: 0 0; }
-  to { translate: 0 calc(0.5 * (240px - max(0px, 40px - 100vh)) / 0.5); }
+  from { translate: 0 calc(0.5 * (max(0px, 40px - 100vh) - max(0px, 140px - 50vh))); }
+  to { translate: 0 calc(0.5 * (calc(240px + 100vh) - max(0px, 140px - 50vh))); }
 }
 
 .motion-blob {
@@ -72,7 +72,7 @@ export default function Landing() {
   .motion-blob {
     animation: motion-blob-loop 3000ms ease-in-out infinite alternate, motion-blob-parallax linear both;
     animation-timeline: auto, scroll(root);
-    animation-range: normal, max(0px, 40px - 100vh) calc(max(0px, 40px - 100vh) + (240px - max(0px, 40px - 100vh)) / 0.5);
+    animation-range: normal, max(0px, 40px - 100vh) calc(240px + 100vh);
     animation-composition: add, add;
   }
   .motion-headline {
