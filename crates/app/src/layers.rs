@@ -260,10 +260,19 @@ impl LayersPanel {
         );
         let eye = Rect::from_center_size(Pos2::new(rect.max.x - 14.0, cy), Vec2::splat(16.0));
         let lock = Rect::from_center_size(Pos2::new(rect.max.x - 34.0, cy), Vec2::splat(16.0));
+        // Motion mark (§13.3): speed lines left of the lock.
+        let has_motion = !node.motion.is_empty();
+        let mark = Rect::from_center_size(Pos2::new(lock.min.x - 10.0, cy), Vec2::new(14.0, 12.0));
         let name_rect = Rect::from_min_max(
             Pos2::new(arrow.max.x + 18.0, rect.min.y + 1.0),
-            Pos2::new(lock.min.x - 4.0, rect.max.y - 1.0),
+            Pos2::new(
+                if has_motion { mark.min.x } else { lock.min.x } - 4.0,
+                rect.max.y - 1.0,
+            ),
         );
+        if has_motion {
+            motion_mark(&painter, mark, SELECTION);
+        }
 
         // Name, or the rename editor.
         let renaming_this = self.renaming.as_ref().is_some_and(|r| r.id == node.id);
@@ -421,6 +430,15 @@ impl LayersPanel {
                 }
             }
         }
+    }
+}
+
+/// Three speed lines, right-aligned: the node has motion effects.
+fn motion_mark(painter: &egui::Painter, r: Rect, color: egui::Color32) {
+    let stroke = Stroke::new(1.4, color);
+    for (i, len) in [8.0, 12.0, 6.0].into_iter().enumerate() {
+        let y = r.min.y + 2.0 + i as f32 * 4.0;
+        painter.line_segment([Pos2::new(r.max.x - len, y), Pos2::new(r.max.x, y)], stroke);
     }
 }
 

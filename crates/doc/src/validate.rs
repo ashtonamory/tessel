@@ -318,6 +318,61 @@ fn check_shape(ctx: &Ctx, s: &Shape, out: &mut Out) {
     check_style_ref(ctx, "effect_style", &s.effect_style, "effect", out);
 }
 
+/// Motion effects (§13.3): one of each kind, none on a group (groups are
+/// flattened in export), and values in range.
+fn check_motion(ctx: &Ctx, n: &Node, out: &mut Out) {
+    if n.motion.is_empty() {
+        return;
+    }
+    if matches!(n.kind, NodeKind::Group(_)) {
+        out.push("motion is not allowed on a group (groups are flattened in export)".to_string());
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for m in &n.motion {
+        if !seen.insert(m.kind()) {
+            out.push(format!("motion has more than one {} effect", m.kind()));
+        }
+        let mut range = |what: &str, v: f32, lo: f32, hi: f32| {
+            if !(lo..=hi).contains(&v) {
+                out.push(format!("motion {} {what} {v} not in {lo}..={hi}", m.kind()));
+            }
+        };
+        match m {
+            Motion::Parallax { speed } => range("speed", *speed, -1.0, 2.0),
+            Motion::Reveal { distance, .. } => range("distance", *distance, 0.0, 2000.0),
+            Motion::Hover {
+                scale,
+                lift,
+                opacity,
+                fill,
+                duration_ms,
+            } => {
+                range("scale", *scale, 0.1, 4.0);
+                range("lift", *lift, -200.0, 200.0);
+                if let Some(o) = opacity {
+                    range("opacity", *o, 0.0, 1.0);
+                }
+                range("duration_ms", *duration_ms as f32, 0.0, 10_000.0);
+                if let Some(c) = fill {
+                    check_color(ctx, "motion hover fill", c, out);
+                }
+            }
+            Motion::Loop {
+                effect,
+                amount,
+                duration_ms,
+            } => {
+                match effect {
+                    LoopEffect::Float => range("amount", *amount, 0.0, 500.0),
+                    LoopEffect::Pulse => range("amount", *amount, 0.1, 4.0),
+                    LoopEffect::Spin => range("amount", *amount, -10.0, 10.0),
+                }
+                range("duration_ms", *duration_ms as f32, 100.0, 60_000.0);
+            }
+        }
+    }
+}
+
 /// Check one node's own props (not its descendants).
 fn check_node(ctx: &Ctx, n: &Node, problems: &mut Vec<Problem>) {
     let mut out = Out {
@@ -332,6 +387,7 @@ fn check_node(ctx: &Ctx, n: &Node, problems: &mut Vec<Problem>) {
     if !(0.0..=1.0).contains(&n.opacity) {
         out.push(format!("opacity {} not in 0..=1", n.opacity));
     }
+    check_motion(ctx, n, &mut out);
     let lc = &n.layout_child;
     for (what, v) in [
         ("min_width", lc.min_width),

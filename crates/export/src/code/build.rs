@@ -168,6 +168,10 @@ pub(crate) struct Builder<'a> {
     pub slot_defaults: BTreeMap<String, Vec<Item>>,
     /// Components called by what was built since the last reset.
     pub used: BTreeSet<String>,
+    /// Every element built that has motion (§13.3), in build order.
+    pub motion: Vec<super::motion::MotionEl>,
+    /// The exported root's top edge, page px: motion measures from it.
+    root_top: f64,
 }
 
 impl<'a> Builder<'a> {
@@ -192,12 +196,22 @@ impl<'a> Builder<'a> {
             props: HashMap::new(),
             slot_defaults: BTreeMap::new(),
             used: BTreeSet::new(),
+            motion: Vec::new(),
+            root_top: 0.0,
         }
+    }
+
+    /// A node's box in page px, if laid out.
+    fn page_box(&self, id: &NodeId) -> Option<layout::kurbo::Rect> {
+        self.geom
+            .get(id)
+            .map(|g| g.transform.transform_rect_bbox(g.local_rect()))
     }
 
     /// The exported node as the root of the output.
     pub fn root(&mut self, n: &Node) -> Vec<Item> {
         let mut out = Vec::new();
+        self.root_top = self.page_box(&n.id).map_or(0.0, |b| b.y0);
         self.node(n, Parent::root(), &mut out);
         out
     }
@@ -284,6 +298,30 @@ impl<'a> Builder<'a> {
         let mut el = El::new(tag, self.class_for(n));
         if self.opts.node_ids {
             el.node_id = Some(n.id.to_string());
+        }
+        if !n.motion.is_empty() {
+            el.motion = true;
+            let hover_fill = n.motion.iter().find_map(|m| match m {
+                doc::Motion::Hover { fill: Some(c), .. } => Some(self.color(c)),
+                _ => None,
+            });
+            let (top, height) = self
+                .page_box(&n.id)
+                .map_or((n.y as f64, n.height as f64), |b| {
+                    (b.y0 - self.root_top, b.height())
+                });
+            self.motion.push(super::motion::MotionEl {
+                class: el.class.clone(),
+                motion: n.motion.clone(),
+                top,
+                height,
+                fill_prop: if matches!(n.kind, NodeKind::Text(_)) {
+                    "color"
+                } else {
+                    "background-color"
+                },
+                hover_fill,
+            });
         }
         el
     }
@@ -393,7 +431,10 @@ impl<'a> Builder<'a> {
                     self.flex_decls(al, &mut el.decls);
                 }
                 if f.clip && f.children.iter().any(|c| c.visible) {
-                    el.decls.push(Decl::lit("overflow", "hidden"));
+                    // `clip`, not `hidden`: clips the same but is no scroll
+                    // container, so scroll-driven motion (§13.3) follows
+                    // the page.
+                    el.decls.push(Decl::lit("overflow", "clip"));
                 }
                 self.background(effective_fills(self.doc, n), size, &mut el.decls);
                 self.stroke(n, container, &mut el.decls);

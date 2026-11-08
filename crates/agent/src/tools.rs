@@ -163,6 +163,15 @@ fn defs() -> Vec<ToolDef> {
              export in a browser, reloaded after every edit) and return its URL. Use it \
              to show the user a design at real phone, tablet and desktop widths.",
         ),
+        def::<PreviewScreenshotArgs>(
+            "preview_screenshot",
+            false,
+            "Capture a frame as a web page in headless Chromium (its HTML + CSS \
+             export, as the preview shows it) at a viewport size and scroll position, \
+             as a PNG. Use it to check responsive layout and motion: scroll to see \
+             reveals and parallax, `reduced_motion` to see every element at rest. \
+             Needs Chromium or Chrome; fails with `no_browser` without one.",
+        ),
         def::<ExportCodeArgs>(
             "export_code",
             false,
@@ -321,6 +330,7 @@ pub async fn call<H: AppHandle>(
         "screenshot" => run!(screenshot),
         "export_file" => run!(export_file),
         "open_preview" => run!(open_preview),
+        "preview_screenshot" => run!(preview_screenshot),
         _ => unreachable!("every listed tool is dispatched"),
     };
     Some(out)
@@ -925,6 +935,67 @@ impl<H: AppHandle> Cx<'_, H> {
         };
         let url = self.app.open_preview(target).await?;
         ok(json!({ "url": url }))
+    }
+
+    async fn preview_screenshot(&self, a: PreviewScreenshotArgs) -> Result<ToolOutput, ToolError> {
+        let node = self.node(&a.id)?;
+        let doc = self.doc();
+        let frame = preview::top_level_of(doc, &node.id).unwrap_or_else(|| node.id.clone());
+        let file = self
+            .snap
+            .path
+            .as_ref()
+            .and_then(|p| p.file_name())
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_else(|| "Untitled".to_string());
+        let page = preview::export_page(
+            doc,
+            &self.snap.geometry,
+            &self.snap.assets,
+            &frame,
+            &file,
+            self.snap.revision,
+        )
+        .map_err(ToolError::internal)?;
+        let [width, height] = a
+            .viewport
+            .unwrap_or([(page.width.round() as u32).clamp(1, preview::MAX_SIDE), 900]);
+        let side = 1..=preview::MAX_SIDE;
+        if !side.contains(&width) || !side.contains(&height) {
+            return Err(ToolError::invalid_args(format!(
+                "viewport sides must be 1 to {} px",
+                preview::MAX_SIDE
+            )));
+        }
+        let opts = preview::ShotOptions {
+            width,
+            height,
+            scroll: a.scroll,
+            reduced_motion: a.reduced_motion,
+            ..Default::default()
+        };
+        let png = tokio::task::spawn_blocking(move || preview::screenshot(page, &opts))
+            .await
+            .map_err(|e| ToolError::internal(format!("preview screenshot: {e}")))?
+            .map_err(|e| match e {
+                preview::ShotError::NoBrowser => ToolError::new(
+                    crate::ErrorCode::NoBrowser,
+                    format!("{e}; install chromium (pacman -S chromium)"),
+                ),
+                preview::ShotError::Failed(m) => {
+                    ToolError::internal(format!("preview screenshot: {m}"))
+                }
+            })?;
+        Ok(ToolOutput::Image {
+            info: json!({
+                "frame_id": frame,
+                "width": width,
+                "height": height,
+                "scroll": a.scroll,
+                "reduced_motion": a.reduced_motion,
+            }),
+            png,
+        })
     }
 
     async fn export_file(&self, a: ExportFileArgs) -> Result<ToolOutput, ToolError> {

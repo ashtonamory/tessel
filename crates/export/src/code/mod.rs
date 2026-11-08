@@ -11,6 +11,7 @@
 mod build;
 mod html;
 mod ir;
+mod motion;
 mod names;
 mod react;
 mod tailwind;

@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="output.css">
 </head>
 <body>
-  <div class="relative w-[400px] h-[300px] overflow-hidden [background:linear-gradient(180deg,_#ffffff00_0%,_#0000001a_100%),_#f8fafc] [outline:2px_solid_#cbd5e1] [outline-offset:-2px]">
+  <div class="relative w-[400px] h-[300px] overflow-clip [background:linear-gradient(180deg,_#ffffff00_0%,_#0000001a_100%),_#f8fafc] [outline:2px_solid_#cbd5e1] [outline-offset:-2px]">
     <div class="absolute left-[10px] w-[50px] top-[10px] h-[50px] bg-[#ef4444] rounded-[8px_0_8px_0]"></div>
     <div class="absolute right-[10px] w-[60px] bottom-[10px] h-[60px] [outline:2px_solid_#0f172a] [outline-offset:-1px]"></div>
     <div class="absolute left-[20px] right-[20px] top-[100px] bottom-[160px] bg-[#3b82f6] border-[3px] border-solid border-[#1e40af]"></div>

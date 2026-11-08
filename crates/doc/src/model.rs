@@ -351,6 +351,8 @@ pub struct Node {
     pub opacity: f32,
     pub layout_child: LayoutChild,
     pub constraints: Constraints,
+    /// Motion effects (§13.3), at most one of each kind; none on groups.
+    pub motion: Vec<Motion>,
     pub kind: NodeKind,
 }
 
@@ -369,6 +371,7 @@ impl Node {
             opacity: 1.0,
             layout_child: LayoutChild::default(),
             constraints: Constraints::default(),
+            motion: Vec::new(),
             kind,
         }
     }
@@ -1107,4 +1110,100 @@ pub enum Override {
     Fills { fills: Vec<Paint> },
     Visible { visible: bool },
     Swap { component: ComponentId },
+}
+
+// ---------------------------------------------------------------------------
+// Motion (§13.3): named effects the code export writes as CSS. The canvas
+// shows a node at rest; the browser preview plays them.
+
+/// One motion effect. In the file: `{ "parallax": { "speed": 0.5 } }`.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", deny_unknown_fields)]
+pub enum Motion {
+    /// Moves at `speed` times the scroll speed while the node is in view:
+    /// 1 = with the page, 0.5 = half speed (feels further away), 0 = stays
+    /// put, above 1 = faster (feels closer). Range -1..=2.
+    Parallax { speed: f32 },
+    /// Plays as the node scrolls into view (scroll-linked: it runs backwards
+    /// when scrolled back up).
+    Reveal {
+        effect: RevealEffect,
+        /// How far a slide travels, px.
+        #[serde(default = "Motion::default_distance")]
+        distance: f32,
+    },
+    /// Applies while the pointer is over the node (and on keyboard focus).
+    Hover {
+        #[serde(default = "Motion::one", skip_serializing_if = "Motion::is_one")]
+        scale: f32,
+        /// Moves up by this much, px.
+        #[serde(default, skip_serializing_if = "Motion::is_zero")]
+        lift: f32,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        opacity: Option<f32>,
+        /// The fill (background, or text color) while hovered.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        fill: Option<ColorRef>,
+        #[serde(default = "Motion::default_hover_ms")]
+        duration_ms: u32,
+    },
+    /// Repeats forever.
+    Loop {
+        effect: LoopEffect,
+        /// Float: px up and down. Pulse: the largest scale. Spin: turns per
+        /// cycle.
+        amount: f32,
+        #[serde(default = "Motion::default_loop_ms")]
+        duration_ms: u32,
+    },
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RevealEffect {
+    Fade,
+    SlideUp,
+    SlideDown,
+    SlideLeft,
+    SlideRight,
+    Scale,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum LoopEffect {
+    Float,
+    Pulse,
+    Spin,
+}
+
+impl Motion {
+    fn default_distance() -> f32 {
+        24.0
+    }
+    fn default_hover_ms() -> u32 {
+        150
+    }
+    fn default_loop_ms() -> u32 {
+        2000
+    }
+    fn one() -> f32 {
+        1.0
+    }
+    fn is_one(v: &f32) -> bool {
+        *v == 1.0
+    }
+    fn is_zero(v: &f32) -> bool {
+        *v == 0.0
+    }
+
+    /// The effect's name in the file: `parallax`, `reveal`, `hover`, `loop`.
+    pub fn kind(&self) -> &'static str {
+        match self {
+            Motion::Parallax { .. } => "parallax",
+            Motion::Reveal { .. } => "reveal",
+            Motion::Hover { .. } => "hover",
+            Motion::Loop { .. } => "loop",
+        }
+    }
 }

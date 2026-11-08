@@ -147,6 +147,9 @@ pub(crate) struct El {
     pub body: Body,
     /// React: rendered only while this boolean prop is true.
     pub cond: Option<String>,
+    /// The node has motion (§13.3), so Tailwind and React keep its class
+    /// for the motion stylesheet to select.
+    pub motion: bool,
 }
 
 impl El {
@@ -162,6 +165,7 @@ impl El {
             attrs: Vec::new(),
             body: Body::Empty,
             cond: None,
+            motion: false,
         }
     }
 }

@@ -26,6 +26,8 @@ use crate::styles_panel;
 
 #[path = "inspector_layout.rs"]
 mod layout_section;
+#[path = "inspector_motion.rs"]
+mod motion_section;
 
 const FIELD_W: f32 = 58.0;
 const HEX_W: f32 = 74.0;
@@ -223,6 +225,8 @@ pub struct Inspector {
     fields: Vec<(String, Rect)>,
     /// What each text field showed last frame.
     texts: Vec<(String, String)>,
+    /// The Motion section's Preview button was clicked.
+    preview: bool,
 }
 
 impl Inspector {
@@ -242,6 +246,11 @@ impl Inspector {
     /// Keys of the fields drawn last frame.
     pub fn field_keys(&self) -> Vec<&str> {
         self.fields.iter().map(|(k, _)| k.as_str()).collect()
+    }
+
+    /// Whether the Preview button was clicked since the last call.
+    pub fn take_preview(&mut self) -> bool {
+        std::mem::take(&mut self.preview)
     }
 
     /// Typing into a field; keyboard shortcuts must leave the keys alone.
@@ -442,6 +451,10 @@ impl Inspector {
             self.strokes(ui, doc, nodes);
             ui.separator();
             self.shadows(ui, doc, nodes);
+        }
+        if motion_section::applies(nodes) {
+            ui.separator();
+            self.motion(ui, doc, nodes);
         }
     }
 
@@ -1704,6 +1717,7 @@ fn diff(a: &Node, b: &Node) -> NodePatch {
         height: d(&a.height, &b.height),
         rotation: d(&a.rotation, &b.rotation),
         opacity: d(&a.opacity, &b.opacity),
+        motion: d(&a.motion, &b.motion),
         ..Default::default()
     };
     let shapes = |sa: &Shape, sb: &Shape, p: &mut NodePatch| {

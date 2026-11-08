@@ -343,3 +343,32 @@ fn instance_children_derive_ids_and_apply_overrides() {
     // Not an instance.
     assert!(instance_children(&doc, doc.node(&node(1)).unwrap()).is_none());
 }
+
+#[test]
+fn motion_html() {
+    golden("motion_html", "code_motion", 1, CodeFormat::Html, |_| {});
+}
+
+#[test]
+fn motion_tailwind_v4() {
+    golden(
+        "motion_tailwind_v4",
+        "code_motion",
+        1,
+        CodeFormat::Tailwind,
+        |_| {},
+    );
+}
+
+#[test]
+fn motion_react_inline() {
+    golden(
+        "motion_react_inline",
+        "code_motion",
+        1,
+        CodeFormat::React,
+        |o| {
+            o.tokens = TokenMode::Inline;
+        },
+    );
+}

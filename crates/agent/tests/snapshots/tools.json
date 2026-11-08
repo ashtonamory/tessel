@@ -880,6 +880,55 @@
     "annotations": {
       "readOnlyHint": true
     },
+    "description": "Capture a frame as a web page in headless Chromium (its HTML + CSS export, as the preview shows it) at a viewport size and scroll position, as a PNG. Use it to check responsive layout and motion: scroll to see reveals and parallax, `reduced_motion` to see every element at rest. Needs Chromium or Chrome; fails with `no_browser` without one.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "A layer; its top-level frame is captured.",
+          "type": "string"
+        },
+        "reduced_motion": {
+          "default": false,
+          "description": "Capture as a browser set to reduce motion: no animations or\ntransitions, every element at rest.",
+          "type": "boolean"
+        },
+        "scroll": {
+          "default": 0,
+          "description": "Scroll the page down this many px first, to see scroll effects.",
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "viewport": {
+          "default": null,
+          "description": "Browser viewport `[width, height]` in px, each 1 to 4096. Default:\nthe frame's width by 900.",
+          "items": {
+            "format": "uint32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PreviewScreenshotArgs",
+      "type": "object"
+    },
+    "name": "preview_screenshot"
+  },
+  {
+    "annotations": {
+      "readOnlyHint": true
+    },
     "description": "Export a node as HTML + CSS, Tailwind or React code. Returns the files (`path`, `language`, `content`; image files are base64 with `encoding: \"base64\"`). Nothing is written to disk.",
     "inputSchema": {
       "$defs": {

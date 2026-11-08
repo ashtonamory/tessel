@@ -1,0 +1,24 @@
+{
+  "format": { "name": "tessel", "version": 1 },
+  "meta": { "title": "Motion" },
+  "tokens": { "colors": { "color.primary": "#2563eb", "color.accent": "#7c3aed" } },
+  "pages": [{ "id": "p_0000000001", "name": "Page", "children": [
+    { "id": "n_0000000001", "name": "Landing", "kind": "frame", "x": 0, "y": 0, "width": 800, "height": 600,
+      "fills": [{ "type": "solid", "color": "#ffffff" }],
+      "children": [
+        { "id": "n_0000000002", "name": "Blob", "kind": "ellipse", "x": 500, "y": 40, "width": 200, "height": 200,
+          "fills": [{ "type": "solid", "color": "{color.accent}" }],
+          "motion": [ { "parallax": { "speed": 0.5 } }, { "loop": { "effect": "float", "amount": 12, "duration_ms": 3000 } } ] },
+        { "id": "n_0000000003", "name": "Headline", "kind": "text", "content": "Hello", "sizing": "fixed",
+          "x": 40, "y": 80, "width": 300, "height": 40,
+          "style": { "font_family": "Inter", "font_size": 32 },
+          "motion": [ { "reveal": { "effect": "slide_up" } } ] },
+        { "id": "n_0000000004", "name": "Button", "kind": "rect", "x": 40, "y": 200, "width": 160, "height": 44,
+          "fills": [{ "type": "solid", "color": "#0f172a" }], "corner_radius": 8,
+          "motion": [ { "hover": { "scale": 1.5, "lift": 2, "fill": "{color.primary}" } } ] },
+        { "id": "n_0000000005", "name": "Star", "kind": "rect", "x": 300, "y": 300, "width": 40, "height": 40, "rotation": 15,
+          "fills": [{ "type": "solid", "color": "#f59e0b" }],
+          "motion": [ { "loop": { "effect": "spin", "amount": 1, "duration_ms": 8000 } }, { "reveal": { "effect": "fade" } } ] }
+      ] }
+  ] }]
+}

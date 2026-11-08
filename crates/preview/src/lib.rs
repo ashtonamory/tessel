@@ -7,6 +7,7 @@
 //! adds the viewport presets; the export itself is never modified.
 
 mod server;
+mod shot;
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -17,6 +18,7 @@ use export::{CodeFormat, CodeOptions, FileContent};
 use layout::Geometry;
 
 pub use server::Server;
+pub use shot::{headless_browser, screenshot, ShotError, ShotOptions, MAX_SIDE};
 
 /// One published export.
 #[derive(Clone, Debug, Default)]
@@ -188,5 +190,34 @@ mod tests {
         let html = String::from_utf8(page.files["index.html"].clone()).unwrap();
         assert!(html.starts_with("<!doctype html>"));
         assert!(page.files.contains_key("styles.css"));
+    }
+
+    /// Opt-in, like the export's browser parity test (§11): a headless
+    /// browser is a property of the machine, and some (CI runners without
+    /// a usable sandbox) have one that aborts. Run with `PREVIEW_SHOT=1`.
+    #[test]
+    fn screenshots_the_page_at_the_asked_size() {
+        if std::env::var_os("PREVIEW_SHOT").is_none() {
+            eprintln!("skipped: set PREVIEW_SHOT=1 to run (needs headless Chromium)");
+            return;
+        }
+        assert!(
+            headless_browser().is_some(),
+            "PREVIEW_SHOT=1 but no Chromium found"
+        );
+        let doc = kitchen_sink();
+        let geom = layout::LayoutEngine::new().compute(&doc);
+        let id = pick_frame(&doc, &doc.pages[0], &[]).unwrap();
+        let page = export_page(&doc, &geom, &Assets::default(), &id, "k.tessel.json", 1).unwrap();
+        let opts = ShotOptions {
+            width: 400,
+            height: 300,
+            ..Default::default()
+        };
+        let png = screenshot(page, &opts).unwrap();
+        assert_eq!(&png[..8], b"\x89PNG\r\n\x1a\n");
+        let w = u32::from_be_bytes(png[16..20].try_into().unwrap());
+        let h = u32::from_be_bytes(png[20..24].try_into().unwrap());
+        assert_eq!((w, h), (400, 300));
     }
 }

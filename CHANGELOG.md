@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Motion.** Layers can have scroll reveals, parallax, hover effects and
+  loops (inspector > Motion, or `motion` in an agent's patch). They are
+  exported as CSS (HTML, Tailwind and React; no JavaScript, off for reduced
+  motion) and play in the preview, which gains a Reduce motion button. The
+  new `preview_screenshot` tool captures the page in headless Chromium at a
+  viewport size and scroll position.
+- **Clipping frames export as `overflow: clip`** instead of `overflow:
+  hidden`. They look the same, but are no longer scroll containers, which
+  scroll-driven motion needs.
 - **Preview in the browser.** View > Preview in browser (Ctrl+Shift+P) shows
   the selection's frame as a web page, its HTML + CSS export, in a Chromium
   app window with Phone, Tablet, Desktop, Frame width and Fit window

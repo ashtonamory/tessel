@@ -1265,7 +1265,7 @@ multiplayer.
 
 ## 13. Proposed (v2): browser preview and motion
 
-Status: **agreed; the preview (M6) is built, motion (M7) is not.** The
+Status: **agreed; the preview (M6) and motion (M7) are built.** The
 preview runs in a browser, links between screens stay out (§1), and §13.6
 records the remaining decisions.
 
@@ -1360,8 +1360,8 @@ pub enum Motion {
     Parallax { speed: f32 },
     /// Plays as the node scrolls into view (scroll-linked, not on a timer).
     Reveal { effect: RevealEffect, distance: f32 /* px, default 24 */ },
-    /// Applies while the pointer is over the node (and on keyboard focus for
-    /// `semantic` button/a).
+    /// Applies while the pointer is over the node, and while it has keyboard
+    /// focus (`:focus-visible`).
     Hover { scale: f32 /* default 1 */, lift: f32 /* px up, default 0 */,
             opacity: Option<f32>, fill: Option<ColorRef>, duration_ms: u32 /* default 150 */ },
     /// Repeats forever.
@@ -1381,36 +1381,48 @@ effects, and saves them unchanged.
 
 | Effect | CSS |
 | ------ | --- |
-| `parallax` | `animation-timeline: view()`, `animation-range: cover`, keyframes on the `translate` property from `-X` to `X`, where `X = (1 - speed) * (100vh + height) / 2` |
-| `reveal` | `animation-timeline: view()`, `animation-range: entry`, keyframes from the offset or faded state to the design |
+| `parallax` | `animation-timeline: scroll(root)` (the page). The node is at its design position when its centre is at the viewport's centre, `Z = max(0px, top + height/2 - 50vh)` (0 for a node in the upper half of the first screen, so the top of the page is the design); `translate` is `(1 - speed) * (scroll - Z)`, so it moves at `speed` times the scroll. The range runs from `max(0px, top - 100vh)` (entering the viewport) to `top + height + 100vh`. `top` is the node's offset in the exported frame. |
+| `reveal` | `animation-timeline: view()`, `animation-range: entry`, fill `backwards`, a keyframe rule with only `from` (the offset or faded state), so it ends at the node's own values |
 | `hover` | `transition` on the changed properties, plus `:hover` (and `:focus-visible`) rules |
 | `loop` | `@keyframes` with `animation: … infinite alternate` (`spin` is not alternated) |
 
-- Effects animate the individual `translate`, `scale` and `opacity`
-  properties, never `transform`, so they combine with a node's rotation. When
-  two effects on one node animate the same property (`parallax` and a hover
-  `lift`), the exporter wraps the element in one extra `<div>`, and only then.
+- Effects animate the individual `translate`, `scale`, `rotate` and
+  `opacity` properties, never `transform`, so they combine with a node's
+  rotation. Effects that move the same property stack: `parallax`, `float`
+  and `spin` use `animation-composition: add`, so they add to a hover `lift`
+  or `scale` and to each other. No wrapper element is needed.
+- Each element with motion keeps its time-based animations (`loop`) in a
+  plain rule, and lists all of its animations again, with their timelines,
+  inside the `@supports` rule.
+- A clipping frame is exported with `overflow: clip`, not `hidden`: both
+  clip, but `hidden` makes a scroll container, and a `view()` timeline would
+  then follow that frame, which never scrolls, instead of the page.
 - All scroll-linked rules sit inside `@supports (animation-timeline: view())`.
   A browser without scroll-driven animations shows the static design, which
   is the design.
-- Inside `@media (prefers-reduced-motion: reduce)`, effects are off and reveals
-  show their final state.
+- Inside `@media (prefers-reduced-motion: reduce)`, animations and
+  transitions are off, so reveals show their final state. Hover movement
+  (`scale`, `lift`) is set only inside `prefers-reduced-motion:
+  no-preference`; a hover `fill` or `opacity` still applies, without a
+  transition.
 - **Tailwind and React exports:** Tailwind has no utilities for scroll
-  timelines, so these exports emit the same rules into a `motion.css` imported
-  by the page, and the elements carry their class names.
+  timelines, so these exports append the same rules to the entry
+  stylesheet (`styles.css`), with tokens written as the theme's variables.
+  Each element with motion carries one class, its name with a `motion-`
+  prefix (`motion-hero`), so it cannot be taken for a utility.
 - Motion is exported as written. It adds no behaviour of its own, as §8 says
   for all exports.
 
 **Canvas.** The canvas shows the design at rest: no effect plays, and
 reveals show their final state. A layer with motion gets a small motion mark
-in the layers panel. When selected, its effects are listed on a tag above the
-selection box.
+(speed lines) in the layers panel. When it is the only selected layer, its
+effects are listed on a tag above the right end of the selection box.
 
 ### 13.4 Inspector and agent
 
-**Inspector.** A Motion section with an "Add effect" menu (one entry per kind
-not yet on the node), the fields of each effect, a remove button, and Preview
-(§13.2).
+**Inspector.** A Motion section with a "+" menu (one entry per kind, those
+already on the node disabled), the fields of each effect, a remove button,
+and "Preview in browser" (§13.2).
 
 **MCP.** `motion` is an ordinary node field: `create_node`, `update_node` and
 `update_nodes` set it, and the tool schemas and the `design_conventions`
@@ -1422,8 +1434,12 @@ prompt describe it. Two tools are added, in the app and in headless mode
 | `open_preview` | `{ id?: Id }` | `{ url }`. Opens the preview window for the user (app only; headless returns the URL of a one-off export). |
 | `preview_screenshot` | `{ id: Id, viewport?: [w, h] = [frame width, 900], scroll?: number = 0, reduced_motion?: bool = false }` | MCP image. The exported page in headless Chromium at that viewport, scrolled down `scroll` px, so an agent can check a parallax effect or a reveal part-way through. Fails with `no_browser` and advice when Chromium is missing. |
 
-`preview_screenshot` loads the shell with `?w=&h=&scroll=&reduced=`, so the
-shell sizes the iframe and scrolls it before the screenshot is taken. Scroll
+`preview_screenshot` serves the page from a one-off server and loads the
+shell with `?live=0&chrome=0&w=&h=&scroll=&reduced=`: `chrome=0` hides the
+shell's header and outline, so the iframe fills the window, and the shell
+scrolls it before the screenshot is taken. With `reduced_motion`, Chromium
+also runs with `--force-prefers-reduced-motion`. In the preview window, a
+"Reduce motion" button does the same for the user. Scroll
 timelines update as soon as the page scrolls, so one capture is enough.
 `screenshot` (§6.3) stays the canvas renderer and shows the design at rest.
 
@@ -1432,11 +1448,11 @@ timelines update as soon as the page scrolls, so one capture is enough.
 - **M6: preview** (built). The in-memory export, the local server, the shell with
   viewport presets, live reload, the Chromium window and its `xdg-open`
   fallback, the `open_preview` tool. No document change.
-- **M7: motion.** The `motion` field, the CSS export,
+- **M7: motion** (built). The `motion` field, the CSS export,
   the inspector section, canvas marks, `preview_screenshot`, and golden tests
-  for the motion CSS. The opt-in parity script gains motion checks: scroll
-  headless Chromium to set positions and compare element boxes with the
-  expected offsets.
+  for the motion CSS. Still to do: the opt-in parity script's motion checks
+  (scroll headless Chromium to set positions and compare element boxes with
+  the expected offsets).
 
 ### 13.6 Decisions
 
