@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- **Preview in the browser.** View > Preview in browser (Ctrl+Shift+P) shows
+  the selection's frame as a web page, its HTML + CSS export, in a Chromium
+  app window with Phone, Tablet, Desktop, Frame width and Fit window
+  viewports. It reloads after every edit, yours or an agent's, and keeps the
+  scroll position. The new `open_preview` tool lets an agent open it (headless
+  mode returns the URL). The page is served from memory on `127.0.0.1` under
+  a random address.
+- **Blank canvas on some graphics drivers.** Tessel checks that the GPU can
+  draw the canvas and, where it cannot (nouveau on older NVIDIA GPUs), offers
+  to restart with software rendering and remembers the choice.
+
 - **Headless.** `tessel render FILE` renders a design file to PNG, JPEG or
   SVG with no window, with an optional layer map (`--layers`) of every
   visible layer's box in the image's pixels. `tessel mcp --headless --root

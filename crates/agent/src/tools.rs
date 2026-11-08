@@ -156,6 +156,13 @@ fn defs() -> Vec<ToolDef> {
             "Render a node exactly as the canvas shows it, as a PNG. Use it after edits \
              to check your work.",
         ),
+        def::<OpenPreviewArgs>(
+            "open_preview",
+            false,
+            "Show a frame as a web page in the user's preview window (its HTML + CSS \
+             export in a browser, reloaded after every edit) and return its URL. Use it \
+             to show the user a design at real phone, tablet and desktop widths.",
+        ),
         def::<ExportCodeArgs>(
             "export_code",
             false,
@@ -313,6 +320,7 @@ pub async fn call<H: AppHandle>(
         "set_selection" => run!(set_selection),
         "screenshot" => run!(screenshot),
         "export_file" => run!(export_file),
+        "open_preview" => run!(open_preview),
         _ => unreachable!("every listed tool is dispatched"),
     };
     Some(out)
@@ -908,6 +916,15 @@ impl<H: AppHandle> Cx<'_, H> {
             }),
             png: shot.png,
         })
+    }
+
+    async fn open_preview(&self, a: OpenPreviewArgs) -> Result<ToolOutput, ToolError> {
+        let target = match &a.id {
+            Some(id) => Some(self.node(id)?.id.clone()),
+            None => None,
+        };
+        let url = self.app.open_preview(target).await?;
+        ok(json!({ "url": url }))
     }
 
     async fn export_file(&self, a: ExportFileArgs) -> Result<ToolOutput, ToolError> {

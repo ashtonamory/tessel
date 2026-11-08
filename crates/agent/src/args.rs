@@ -288,6 +288,15 @@ pub struct ScreenshotArgs {
     pub background: Option<String>,
 }
 
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct OpenPreviewArgs {
+    /// A layer to preview; its top-level frame is shown. Default: the frame
+    /// holding the user's selection, else the current page's first frame.
+    #[serde(default)]
+    pub id: Option<Id>,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExportFormatArg {

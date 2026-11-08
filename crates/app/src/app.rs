@@ -139,6 +139,8 @@ enum Action {
     ImportSvg,
     /// Show or hide the Export window.
     ToggleExport,
+    /// Show the selection's frame in the browser preview (§13.2).
+    Preview,
     ExportTokens(export::TokenFormat),
     /// Paste whatever the system clipboard holds.
     Paste,
@@ -224,6 +226,8 @@ pub struct DesignApp {
     reload_prompt: bool,
     /// The MCP server agents connect to (§6.1); `None` until started.
     agent: Option<AgentHost>,
+    /// The browser preview (§13.2); `None` until first opened.
+    preview: Option<crate::preview_window::PreviewWindow>,
     /// Where each side panel lives (docked, hidden, detached).
     panels: Panels,
     /// What `ui.json` last held; `None` means do not write it.
@@ -275,6 +279,7 @@ impl DesignApp {
             recovery_offer: None,
             reload_prompt: false,
             agent: None,
+            preview: None,
             panels: Panels::default(),
             panels_saved: None,
             ed,
@@ -454,6 +459,15 @@ impl DesignApp {
                 self.components.ui(ui, &mut self.ed, view)
             }
         }
+    }
+
+    /// Open the preview on `target`'s frame (§13.2); see
+    /// [`crate::preview_window::open`].
+    fn open_preview(&mut self, target: Option<&doc::NodeId>) -> Result<String, String> {
+        let profile = agent_socket::runtime_dir().join("preview-profile");
+        let url = crate::preview_window::open(&mut self.preview, &self.ed, target, &profile)?;
+        self.ed.status = Some(format!("Preview: {url}"));
+        Ok(url)
     }
 
     fn replace_editor(&mut self, mut ed: Editor) {
@@ -734,6 +748,12 @@ impl DesignApp {
             Action::InsertImage => self.insert_image(place::pick_file()),
             Action::ImportSvg => self.import_svg_dialog(),
             Action::ToggleExport => self.export.toggle(),
+            Action::Preview => {
+                self.canvas.interrupt(&mut self.ed);
+                if let Err(e) = self.open_preview(None) {
+                    self.ed.status = Some(format!("Preview: {e}"));
+                }
+            }
             Action::ExportTokens(f) => self.export_tokens_dialog(f),
             Action::Paste => {
                 let text = arboard::Clipboard::new()
@@ -797,6 +817,7 @@ impl DesignApp {
             // Shift variants first: consume_shortcut ignores extra Shift.
             sc(cmd_shift, Key::K, Action::InsertImage);
             sc(cmd_shift, Key::E, Action::ToggleExport);
+            sc(cmd_shift, Key::P, Action::Preview);
             sc(cmd_shift, Key::S, Action::SaveAs);
             sc(cmd, Key::S, Action::Save);
             sc(cmd, Key::O, Action::Open);
@@ -944,6 +965,13 @@ impl DesignApp {
                 }
             });
             ui.menu_button("View", |ui| {
+                if ui
+                    .add(egui::Button::new("Preview in browser").shortcut_text("Ctrl+Shift+P"))
+                    .clicked()
+                {
+                    out.push(Action::Preview);
+                }
+                ui.separator();
                 for (label, sc, a) in [
                     ("Zoom to fit", "Shift+1", Action::ZoomFit),
                     ("Zoom to selection", "Shift+2", Action::ZoomSelection),
@@ -1370,6 +1398,15 @@ impl eframe::App for DesignApp {
         }
         if let Some(host) = &mut self.agent {
             host.process(&ctx, frame, &mut self.ed, &mut self.canvas);
+            for req in host.take_previews() {
+                let result = self.open_preview(req.target.as_ref());
+                req.respond(result);
+            }
+        }
+        if let Some(p) = &mut self.preview {
+            if let Some(wait) = p.tick(&self.ed, self.ed.clock.now()) {
+                ctx.request_repaint_after(wait);
+            }
         }
 
         let mut actions = self.shortcuts(&ctx);

@@ -26,7 +26,7 @@ Crates:
 - `crates/export`: PNG (offscreen on the app's GPU device) and SVG export, code
   export (HTML + CSS, Tailwind v3/v4, React TSX) and token export (CSS
   variables, Tailwind theme).
-- `crates/agent`: the MCP server (20 tools, the `design_conventions` prompt,
+- `crates/agent`: the MCP server (21 tools, the `design_conventions` prompt,
   selection and document resources) on `rmcp` 3.5.1.
 - `crates/app`: the `tessel` binary (eframe/egui), which hosts the
   MCP server, and its `tessel mcp` stdio bridge.
@@ -153,7 +153,8 @@ The layout and sizes are remembered in `$XDG_CONFIG_HOME/tessel/ui.json`
 (default `~/.config/tessel/ui.json`).
 
 **Files.** Ctrl+N new, Ctrl+O open, Ctrl+S save, Ctrl+Shift+S save as, Ctrl+Q
-quit, Ctrl+Shift+E opens the Export window. File > Import SVG... turns an SVG into layers. Shift+Ctrl+K inserts an
+quit, Ctrl+Shift+E opens the Export window, Ctrl+Shift+P previews the frame in a
+browser (see Preview below). File > Import SVG... turns an SVG into layers. Shift+Ctrl+K inserts an
 image (also pasting an image from the clipboard); images are stored beside the
 document and referenced by hash.
 
@@ -261,7 +262,7 @@ pi mcp add tessel -- tessel mcp
 
 This writes `~/.pi/agent/mcp.json` (`-l` writes the project's `.pi/mcp.json`
 instead). Check it with `pi mcp list`, which should show `tessel: connected,
-20 tools`.
+21 tools`.
 
 ### Options
 
@@ -274,14 +275,15 @@ agent is told the app is not running (`not_running`) until you start it; the
 bridge then connects on the next call. `tessel mcp --help` lists the
 options.
 
-The agent has 20 tools (`crates/agent`):
+The agent has 21 tools (`crates/agent`):
 
 - read: `get_document`, `get_node`, `find_nodes`, `get_selection`, `get_tokens`
 - edit: `create_node`, `update_node`, `update_nodes`, `delete_nodes`,
   `move_node`, `duplicate_node`, `set_tokens`, `upsert_style`, `apply_style`
 - components: `create_component`, `create_instance`
 - point: `set_selection` (selects in the app; not an edit)
-- look and export: `screenshot` (a layer as the canvas shows it), `export_code`
+- look and export: `screenshot` (a layer as the canvas shows it), `open_preview`
+  (the browser preview, below), `export_code`
   (HTML + CSS, Tailwind or React as text) and `export_file` (PNG or SVG; the
   file must end in `.png` or `.svg` to match, sit inside the document's folder
   or your home folder with no hidden folder or file (name starting with `.`)
@@ -326,6 +328,23 @@ tessel render post.tessel.json -o post.jpg --scale 2 --layers post.layers.json
 pixels, back to front, so a tap on the image can be traced to a layer. Both
 render on the GPU, or on the CPU through Mesa's lavapipe where there is none
 (`TESSEL_GPU=software` forces it). See [SPEC §6.7](docs/SPEC.md).
+
+## Preview
+
+View > Preview in browser (Ctrl+Shift+P) shows the frame holding the
+selection (or the page's first frame) as a web page: its HTML + CSS export,
+exactly what `export_code` gives an agent, in a Chromium app window of its own
+that Hyprland tiles beside Tessel. The toolbar switches the viewport between
+Phone (393), Tablet (834), Desktop (1440), the frame's own width and the
+window's width; phones and tablets get a device outline. Every edit, yours or
+an agent's, reloads the page within 150 ms, keeping the scroll position.
+Without a Chromium-based browser it opens in your default browser through
+`xdg-open`.
+
+The page is served from memory on `127.0.0.1`, at a random port and a random
+address, and only to that host, so nothing is written to disk and other users
+cannot read it. An agent opens the preview with `open_preview`; in headless
+mode it returns the URL, which follows each edit too.
 
 ## Exporting
 
