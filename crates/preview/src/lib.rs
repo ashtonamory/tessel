@@ -192,12 +192,19 @@ mod tests {
         assert!(page.files.contains_key("styles.css"));
     }
 
+    /// Opt-in, like the export's browser parity test (§11): a headless
+    /// browser is a property of the machine, and some (CI runners without
+    /// a usable sandbox) have one that aborts. Run with `PREVIEW_SHOT=1`.
     #[test]
     fn screenshots_the_page_at_the_asked_size() {
-        if headless_browser().is_none() {
-            eprintln!("skipped: no headless Chromium");
+        if std::env::var_os("PREVIEW_SHOT").is_none() {
+            eprintln!("skipped: set PREVIEW_SHOT=1 to run (needs headless Chromium)");
             return;
         }
+        assert!(
+            headless_browser().is_some(),
+            "PREVIEW_SHOT=1 but no Chromium found"
+        );
         let doc = kitchen_sink();
         let geom = layout::LayoutEngine::new().compute(&doc);
         let id = pick_frame(&doc, &doc.pages[0], &[]).unwrap();
