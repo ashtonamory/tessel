@@ -444,3 +444,45 @@ fn nothing_selected_shows_no_fields() {
     assert!(h.ed().selection.is_empty());
     assert!(h.app.inspector().field_rect("x").is_none());
 }
+
+#[test]
+fn motion_add_edit_and_remove() {
+    use doc::{Motion, RevealEffect};
+    let mut h = one_rect();
+    let motion = |h: &Harness| h.children()[0].motion.clone();
+    h.click(field(&h, "motion.add"));
+    h.step(vec![]);
+    h.click(field(&h, "motion.add.reveal"));
+    assert_eq!(
+        motion(&h),
+        [Motion::Reveal {
+            effect: RevealEffect::SlideUp,
+            distance: 24.0
+        }]
+    );
+    type_into(&mut h, "motion.reveal.distance", "40");
+    assert!(matches!(motion(&h)[0], Motion::Reveal { distance, .. } if distance == 40.0));
+
+    h.click(field(&h, "motion.add"));
+    h.step(vec![]);
+    h.click(field(&h, "motion.add.hover"));
+    assert_eq!(motion(&h).len(), 2);
+    type_into(&mut h, "motion.hover.scale", "110");
+    assert!(
+        matches!(motion(&h)[1], Motion::Hover { scale, .. } if (scale - 1.1).abs() < 1e-6),
+        "{:?}",
+        motion(&h)
+    );
+    // A kind already on the node is not offered again.
+    h.click(field(&h, "motion.add"));
+    h.step(vec![]);
+    h.click(field(&h, "motion.add.hover"));
+    assert_eq!(motion(&h).len(), 2);
+    h.click(field(&h, "motion.add"));
+    h.step(vec![]);
+
+    h.click(field(&h, "motion.reveal.remove"));
+    assert!(matches!(motion(&h)[..], [Motion::Hover { .. }]));
+    h.key(Key::Z, Modifiers::COMMAND);
+    assert_eq!(motion(&h).len(), 2);
+}

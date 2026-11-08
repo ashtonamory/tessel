@@ -24,6 +24,15 @@ Tokens and styles
 - Tokens are named values: colors, spacing, radii, fonts. Reference them in props as "{color.primary}", "{space.4}", "{radius.md}". Create or change them with set_tokens.
 - Styles are named fill, stroke, text and effect bundles; create them with upsert_style and attach them with apply_style. Use tokens and styles instead of repeating literal values.
 
+Motion (web pages; exported as CSS, never JavaScript)
+- Any node except a group can have "motion": a list with at most one of each effect. It shows in the browser preview and code export, not on the canvas.
+- { "reveal": { "effect": "fade|slide_up|slide_down|slide_left|slide_right|scale", "distance": 24 } } plays as the node scrolls into view.
+- { "parallax": { "speed": 0.5 } } moves the node at that fraction of the scroll speed (1 = normal, below 1 = slower, like a background; -1..2).
+- { "hover": { "scale": 1.05, "lift": 2, "opacity", "fill": "{color.primary}", "duration_ms": 150 } } on pointer hover and keyboard focus.
+- { "loop": { "effect": "float|pulse|spin", "amount", "duration_ms": 2000 } }: float moves up by amount px, pulse scales to amount, spin turns amount turns.
+- Use motion sparingly: a reveal on section headings, hover on buttons and cards, parallax on decoration. Browsers that ask for reduced motion get none.
+- Check it with preview_screenshot: "scroll" shows reveals and parallax part way, "reduced_motion": true shows every node at rest.
+
 Working
 - When the user says "this", "here" or "the selected …", call get_selection first.
 - Read before you write: get_document for the overview, get_node for exact props, find_nodes to search.

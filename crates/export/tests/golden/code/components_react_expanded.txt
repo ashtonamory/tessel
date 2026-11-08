@@ -3,17 +3,17 @@
 
 export default function Checkout() {
   return (
-    <div className="relative w-[360px] h-[200px] flex flex-col gap-[12px] p-[16px] items-start overflow-hidden bg-[#f1f5f9]">
-      <button className="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-primary rounded-md">
-        <span className="relative w-[16px] h-[16px] shrink-0 overflow-hidden">
+    <div className="relative w-[360px] h-[200px] flex flex-col gap-[12px] p-[16px] items-start overflow-clip bg-[#f1f5f9]">
+      <button className="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-clip bg-primary rounded-md">
+        <span className="relative w-[16px] h-[16px] shrink-0 overflow-clip">
           <svg className="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
             <path className="fill-[#ffffff]" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z" />
           </svg>
         </span>
         <span className="w-[160px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">{"Pay \"now\""}</span>
       </button>
-      <button className="relative shrink-0 self-stretch flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-primary rounded-md">
-        <span className="relative w-[16px] h-[16px] shrink-0 overflow-hidden">
+      <button className="relative shrink-0 self-stretch flex gap-[8px] px-[16px] py-3 items-center overflow-clip bg-primary rounded-md">
+        <span className="relative w-[16px] h-[16px] shrink-0 overflow-clip">
           <svg className="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
             <path className="fill-[#ffffff]" d="M8 15L2 9A3 3 0 0 1 8 4A3 3 0 0 1 14 9Z" />
           </svg>
@@ -21,8 +21,8 @@ export default function Checkout() {
         <span className="w-[160px] h-[16px] shrink-0 font-['Inter',_sans-serif] text-[14px] font-semibold leading-[normal] text-[#ffffff] whitespace-pre-wrap">Save</span>
         <span className="w-[8px] h-[8px] shrink-0 bg-[#ffffff]" />
       </button>
-      <button className="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-hidden bg-[#dc2626] rounded-md">
-        <span className="relative w-[16px] h-[16px] shrink-0 overflow-hidden">
+      <button className="relative shrink-0 flex gap-[8px] px-[16px] py-3 items-center overflow-clip bg-[#dc2626] rounded-md">
+        <span className="relative w-[16px] h-[16px] shrink-0 overflow-clip">
           <svg className="absolute left-0 w-[16px] top-0 h-[16px] overflow-visible">
             <path className="fill-[#ffffff]" d="M8 1L10 6H15L11 9L12 15L8 12L4 15L5 9L1 6H6Z" />
           </svg>

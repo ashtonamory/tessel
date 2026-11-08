@@ -46,6 +46,10 @@ impl Tw {
     /// Utilities for the element's own look and layout.
     pub fn look(&self, el: &El) -> Vec<String> {
         let mut u = Vec::new();
+        if el.motion {
+            // The motion stylesheet selects it by class (§13.3).
+            u.push(super::motion::class(MOTION_PREFIX, &el.class));
+        }
         match (&el.text_style, self.vars) {
             (Some(s), true) => {
                 u.push(format!("text-{}", s.name));
@@ -104,14 +108,18 @@ impl Tw {
         }
     }
 
-    /// A value inside `[…]`: tokens as theme references, spaces as `_`.
-    fn arb(&self, v: &Val) -> String {
-        let s = v.render(|kind, _, key, lit| match (self.vars, self.v4) {
+    /// A value in the entry stylesheet: tokens as theme references.
+    pub fn css_value(&self, v: &Val) -> String {
+        v.render(|kind, _, key, lit| match (self.vars, self.v4) {
             (false, _) => lit.to_string(),
             (true, true) => format!("var(--{}-{key})", kind.v4()),
             (true, false) => format!("theme({}.{key})", kind.v3()),
-        });
-        s.replace('_', "\\_").replace(' ', "_")
+        })
+    }
+
+    /// A value inside `[…]`: tokens as theme references, spaces as `_`.
+    fn arb(&self, v: &Val) -> String {
+        self.css_value(v).replace('_', "\\_").replace(' ', "_")
     }
 
     fn tok<'v>(&self, v: &'v Val, kind: TokKind) -> Option<&'v str> {
@@ -226,6 +234,9 @@ fn flex_word(v: &str) -> &str {
     }
 }
 
+/// Put before a motion class so it cannot be a utility's name.
+pub(super) const MOTION_PREFIX: &str = "motion-";
+
 pub(super) fn export(
     doc: &Document,
     geom: &Geometry,
@@ -243,7 +254,8 @@ pub(super) fn export(
         "html",
         page(&head, &node.name, "output.css", &build_note(opts), &body),
     )];
-    files.extend(theme_files(doc, opts, &head));
+    let motion = super::motion::css(&b.motion, MOTION_PREFIX, &|v| tw.css_value(v));
+    files.extend(theme_files(doc, opts, &head, &motion));
     (files, std::mem::take(&mut b.assets))
 }
 
@@ -258,7 +270,13 @@ fn build_note(opts: &CodeOptions<'_>) -> String {
 }
 
 /// The Tailwind entry stylesheet, plus `tailwind.config.js` for v3.
-pub(super) fn theme_files(doc: &Document, opts: &CodeOptions<'_>, head: &str) -> Vec<OutFile> {
+/// `motion` is the motion stylesheet, appended to the entry stylesheet.
+pub(super) fn theme_files(
+    doc: &Document,
+    opts: &CodeOptions<'_>,
+    head: &str,
+    motion: &str,
+) -> Vec<OutFile> {
     let vars = opts.tokens == TokenMode::CssVars;
     let head_css = format!("/* {} */\n\n", css_comment(head));
     match opts.tailwind {
@@ -269,13 +287,16 @@ pub(super) fn theme_files(doc: &Document, opts: &CodeOptions<'_>, head: &str) ->
                 css.push('\n');
                 css.push_str(&theme);
             }
+            css.push_str(motion);
             vec![OutFile::text("styles.css", "css", css)]
         }
         TailwindVersion::V3 => vec![
             OutFile::text(
                 "styles.css",
                 "css",
-                head_css + "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n",
+                head_css
+                    + "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n"
+                    + motion,
             ),
             OutFile::text(
                 "tailwind.config.js",

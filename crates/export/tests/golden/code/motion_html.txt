@@ -1,0 +1,191 @@
+=== index.html (html) ===
+<!doctype html>
+<!-- tessel export: file="test.tessel.json" node="n_0000000001" revision=7 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="landing">
+    <div class="blob"></div>
+    <p class="headline">Hello</p>
+    <div class="button"></div>
+    <div class="star"></div>
+  </div>
+</body>
+</html>
+=== styles.css (css) ===
+/* tessel export: file="test.tessel.json" node="n_0000000001" revision=7 */
+
+:root {
+  --color-accent: #7c3aed;
+  --color-primary: #2563eb;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+img,
+svg {
+  display: block;
+}
+
+button {
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+.landing {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  overflow: clip;
+  background-color: #ffffff;
+}
+
+.blob {
+  position: absolute;
+  left: 500px;
+  width: 200px;
+  top: 40px;
+  height: 200px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+}
+
+.headline {
+  position: absolute;
+  left: 40px;
+  width: 300px;
+  top: 80px;
+  height: 40px;
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: normal;
+  color: transparent;
+  white-space: pre-wrap;
+}
+
+.button {
+  position: absolute;
+  left: 40px;
+  width: 160px;
+  top: 200px;
+  height: 44px;
+  background-color: #0f172a;
+  border-radius: 8px;
+}
+
+.star {
+  position: absolute;
+  left: 300px;
+  width: 40px;
+  top: 300px;
+  height: 40px;
+  background-color: #f59e0b;
+  transform: rotate(15deg);
+}
+
+/* Motion (tessel §13.3): CSS only, off for prefers-reduced-motion. */
+
+@keyframes blob-loop {
+  from { translate: 0 0; }
+  to { translate: 0 -12px; }
+}
+
+@keyframes blob-parallax {
+  from { translate: 0 0; }
+  to { translate: 0 calc(0.5 * (240px - max(0px, 40px - 100vh)) / 0.5); }
+}
+
+.blob {
+  animation: blob-loop 3000ms ease-in-out infinite alternate;
+  animation-composition: add;
+}
+
+@keyframes headline-reveal {
+  from { opacity: 0; translate: 0 24px; }
+}
+
+.button {
+  transition: scale 150ms ease, translate 150ms ease, background-color 150ms ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  background-color: var(--color-primary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .button:hover,
+  .button:focus-visible {
+    scale: 1.5;
+    translate: 0 -2px;
+  }
+}
+
+@keyframes star-reveal {
+  from { opacity: 0; }
+}
+
+@keyframes star-loop {
+  from { rotate: 0turn; }
+  to { rotate: 1turn; }
+}
+
+.star {
+  animation: star-loop 8000ms linear infinite;
+  animation-composition: add;
+}
+
+@supports (animation-timeline: view()) {
+  .blob {
+    animation: blob-loop 3000ms ease-in-out infinite alternate, blob-parallax linear both;
+    animation-timeline: auto, scroll(root);
+    animation-range: normal, max(0px, 40px - 100vh) calc(max(0px, 40px - 100vh) + (240px - max(0px, 40px - 100vh)) / 0.5);
+    animation-composition: add, add;
+  }
+  .headline {
+    animation: headline-reveal linear backwards;
+    animation-timeline: view();
+    animation-range: entry;
+  }
+  .star {
+    animation: star-reveal linear backwards, star-loop 8000ms linear infinite;
+    animation-timeline: view(), auto;
+    animation-range: entry, normal;
+    animation-composition: replace, add;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .headline,
+  .button,
+  .star {
+    animation: none !important;
+    transition: none !important;
+  }
+}

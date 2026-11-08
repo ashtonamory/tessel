@@ -78,6 +78,7 @@ pub(super) fn export(
     css.push_str(RESET);
     css.push_str(&text_style_rules(&b, vars));
     rules(&items, vars, &mut css);
+    css.push_str(&super::motion::css(&b.motion, "", &|v| v.css(vars)));
     (
         vec![
             OutFile::text("index.html", "html", html),

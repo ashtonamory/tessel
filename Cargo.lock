@@ -146,6 +146,7 @@ dependencies = [
  "export",
  "image",
  "layout",
+ "preview",
  "rmcp",
  "schemars",
  "serde",
@@ -3116,6 +3117,7 @@ dependencies = [
  "layout",
  "log",
  "serde_json",
+ "thiserror 2.0.21",
  "tokio",
  "uuid",
 ]

@@ -1426,6 +1426,11 @@ impl eframe::App for DesignApp {
             self.canvas.interrupt(&mut self.ed);
         }
         self.inspector.apply(&ctx, &mut self.ed);
+        if self.inspector.take_preview() {
+            if let Err(e) = self.open_preview(None) {
+                self.ed.status = Some(format!("Preview: {e}"));
+            }
+        }
         egui::CentralPanel::default()
             .frame(egui::Frame::NONE)
             .show(ui, |ui| {

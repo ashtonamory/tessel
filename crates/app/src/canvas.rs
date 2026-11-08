@@ -1457,6 +1457,35 @@ impl Canvas {
             let bg = Rect::from_min_size(pos, galley.size()).expand2(Vec2::new(4.0, 2.0));
             painter.rect_filled(bg, CornerRadius::same(3), SELECTION);
             painter.galley(pos, galley, Color32::WHITE);
+            // Motion (§13.3) plays only in the preview; name it above the
+            // box, right-aligned so it clears a frame's title.
+            if let [id] = ed.selection.as_slice() {
+                if let Some(n) = ed.node(id).filter(|n| !n.motion.is_empty()) {
+                    let names: Vec<&str> = n
+                        .motion
+                        .iter()
+                        .map(|m| match m {
+                            doc::Motion::Reveal { .. } => "Reveal",
+                            doc::Motion::Parallax { .. } => "Parallax",
+                            doc::Motion::Hover { .. } => "Hover",
+                            doc::Motion::Loop { .. } => "Loop",
+                        })
+                        .collect();
+                    let tag = format!("Motion: {}", names.join(" · "));
+                    let galley = painter.layout_no_wrap(tag, FontId::proportional(11.0), SELECTION);
+                    let pos =
+                        Pos2::new(sr.max.x - galley.size().x, sr.min.y - galley.size().y - 8.0);
+                    let bg = Rect::from_min_size(pos, galley.size()).expand2(Vec2::new(4.0, 2.0));
+                    painter.rect_filled(bg, CornerRadius::same(3), Color32::WHITE);
+                    painter.rect_stroke(
+                        bg,
+                        CornerRadius::same(3),
+                        Stroke::new(1.0, SELECTION),
+                        StrokeKind::Inside,
+                    );
+                    painter.galley(pos, galley, SELECTION);
+                }
+            }
         }
         match &self.drag {
             Some(Drag::Move { .. } | Drag::Resize { .. }) => {

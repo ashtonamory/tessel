@@ -26,7 +26,7 @@ Crates:
 - `crates/export`: PNG (offscreen on the app's GPU device) and SVG export, code
   export (HTML + CSS, Tailwind v3/v4, React TSX) and token export (CSS
   variables, Tailwind theme).
-- `crates/agent`: the MCP server (21 tools, the `design_conventions` prompt,
+- `crates/agent`: the MCP server (22 tools, the `design_conventions` prompt,
   selection and document resources) on `rmcp` 3.5.1.
 - `crates/app`: the `tessel` binary (eframe/egui), which hosts the
   MCP server, and its `tessel mcp` stdio bridge.
@@ -262,7 +262,7 @@ pi mcp add tessel -- tessel mcp
 
 This writes `~/.pi/agent/mcp.json` (`-l` writes the project's `.pi/mcp.json`
 instead). Check it with `pi mcp list`, which should show `tessel: connected,
-21 tools`.
+22 tools`.
 
 ### Options
 
@@ -275,7 +275,7 @@ agent is told the app is not running (`not_running`) until you start it; the
 bridge then connects on the next call. `tessel mcp --help` lists the
 options.
 
-The agent has 21 tools (`crates/agent`):
+The agent has 22 tools (`crates/agent`):
 
 - read: `get_document`, `get_node`, `find_nodes`, `get_selection`, `get_tokens`
 - edit: `create_node`, `update_node`, `update_nodes`, `delete_nodes`,
@@ -283,7 +283,8 @@ The agent has 21 tools (`crates/agent`):
 - components: `create_component`, `create_instance`
 - point: `set_selection` (selects in the app; not an edit)
 - look and export: `screenshot` (a layer as the canvas shows it), `open_preview`
-  (the browser preview, below), `export_code`
+  (the browser preview, below), `preview_screenshot` (the page in headless
+  Chromium at a viewport size and scroll position), `export_code`
   (HTML + CSS, Tailwind or React as text) and `export_file` (PNG or SVG; the
   file must end in `.png` or `.svg` to match, sit inside the document's folder
   or your home folder with no hidden folder or file (name starting with `.`)
@@ -345,6 +346,27 @@ The page is served from memory on `127.0.0.1`, at a random port and a random
 address, and only to that host, so nothing is written to disk and other users
 cannot read it. An agent opens the preview with `open_preview`; in headless
 mode it returns the URL, which follows each edit too.
+
+## Motion
+
+Web pages can move. Select a layer and use the inspector's Motion section to
+add:
+
+- **Reveal on scroll:** fade, slide or scale in as the layer scrolls into view.
+- **Parallax:** move at a fraction of the scroll speed (0.5 for a background
+  that drifts behind the page).
+- **Hover:** scale, lift, fade or change fill under the pointer and on
+  keyboard focus.
+- **Loop:** float, pulse or spin forever.
+
+Effects play in the preview and the code export, not on the canvas, which
+shows the design at rest; a layer with motion gets speed lines in the layers
+panel. The export is CSS only, with no JavaScript: scroll-driven animations
+(Chromium and Safari 26; other browsers show the design at rest), and every
+effect is off for visitors who ask for reduced motion. The preview's Reduce
+motion button shows the page that way. Agents set `motion` like any other
+property and check it with `preview_screenshot` (`scroll`, `reduced_motion`).
+See [SPEC §13.3](docs/SPEC.md).
 
 ## Exporting
 

@@ -28,6 +28,8 @@ struct Common<'a> {
     layout_child: &'a LayoutChild,
     #[serde(skip_serializing_if = "is_default_ref")]
     constraints: &'a Constraints,
+    #[serde(skip_serializing_if = "<[Motion]>::is_empty")]
+    motion: &'a [Motion],
 }
 
 fn is_default_ref<T: Default + PartialEq + Serialize>(v: &&T) -> bool {
@@ -51,6 +53,7 @@ impl Serialize for Node {
             opacity: self.opacity,
             layout_child: &self.layout_child,
             constraints: &self.constraints,
+            motion: &self.motion,
         }
         .serialize(FieldsInto(&mut m))?;
         let into = FieldsInto(&mut m);
@@ -101,6 +104,8 @@ struct NodeRaw {
     layout_child: LayoutChild,
     #[serde(default)]
     constraints: Constraints,
+    #[serde(default)]
+    motion: Vec<Motion>,
     #[serde(flatten)]
     rest: Map<String, Value>,
 }
@@ -147,6 +152,7 @@ impl<'de> Deserialize<'de> for Node {
             opacity: raw.opacity,
             layout_child: raw.layout_child,
             constraints: raw.constraints,
+            motion: raw.motion,
             kind,
         })
     }

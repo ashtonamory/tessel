@@ -297,6 +297,24 @@ pub struct OpenPreviewArgs {
     pub id: Option<Id>,
 }
 
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct PreviewScreenshotArgs {
+    /// A layer; its top-level frame is captured.
+    pub id: Id,
+    /// Browser viewport `[width, height]` in px, each 1 to 4096. Default:
+    /// the frame's width by 900.
+    #[serde(default)]
+    pub viewport: Option<[u32; 2]>,
+    /// Scroll the page down this many px first, to see scroll effects.
+    #[serde(default)]
+    pub scroll: u32,
+    /// Capture as a browser set to reduce motion: no animations or
+    /// transitions, every element at rest.
+    #[serde(default)]
+    pub reduced_motion: bool,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExportFormatArg {

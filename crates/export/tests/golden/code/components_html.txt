@@ -87,7 +87,7 @@ ul {
   gap: 12px;
   padding: 16px;
   align-items: flex-start;
-  overflow: hidden;
+  overflow: clip;
   background-color: #f1f5f9;
 }
 
@@ -98,7 +98,7 @@ ul {
   gap: 8px;
   padding: var(--space-3) 16px;
   align-items: center;
-  overflow: hidden;
+  overflow: clip;
   background-color: var(--color-primary);
   border-radius: var(--radius-md);
 }
@@ -108,7 +108,7 @@ ul {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .shape {
@@ -144,7 +144,7 @@ ul {
   gap: 8px;
   padding: var(--space-3) 16px;
   align-items: center;
-  overflow: hidden;
+  overflow: clip;
   background-color: var(--color-primary);
   border-radius: var(--radius-md);
 }
@@ -154,7 +154,7 @@ ul {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .shape-2 {
@@ -196,7 +196,7 @@ ul {
   gap: 8px;
   padding: var(--space-3) 16px;
   align-items: center;
-  overflow: hidden;
+  overflow: clip;
   background-color: #dc2626;
   border-radius: var(--radius-md);
 }
@@ -206,7 +206,7 @@ ul {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .shape-3 {

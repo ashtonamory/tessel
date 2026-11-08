@@ -741,6 +741,9 @@ pub struct NodePatch {
     pub layout_child: Option<LayoutChild>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub constraints: Option<Constraints>,
+    /// The whole motion list (§13.3); `[]` removes every effect.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<Vec<Motion>>,
 
     // Shape: frame, rect, ellipse, vector (fills also text; corner_radius
     // also image).
@@ -944,6 +947,7 @@ impl NodePatch {
         swap!(p, inv, opacity => node.opacity);
         swap!(p, inv, layout_child => node.layout_child);
         swap!(p, inv, constraints => node.constraints);
+        swap!(p, inv, motion => node.motion);
         match &mut node.kind {
             NodeKind::Frame(f) => {
                 swap_shape!(p, inv, f.shape);

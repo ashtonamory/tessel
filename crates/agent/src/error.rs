@@ -18,6 +18,8 @@ pub enum ErrorCode {
     Invariant,
     ReadOnly,
     NotRunning,
+    /// A tool needs a browser that is not installed.
+    NoBrowser,
     Internal,
 }
 

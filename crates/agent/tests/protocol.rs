@@ -86,6 +86,7 @@ async fn tools_list_has_every_m4_tool_with_object_schemas() {
             "set_selection",
             "screenshot",
             "open_preview",
+            "preview_screenshot",
             "export_code",
             "export_file",
         ]

@@ -58,7 +58,10 @@ pub(super) fn export(
             files.push(OutFile::text(format!("{name}.tsx"), "tsx", src));
         }
     }
-    files.extend(theme_files(doc, opts, &head));
+    let motion = super::motion::css(&b.motion, super::tailwind::MOTION_PREFIX, &|v| {
+        tw.css_value(v)
+    });
+    files.extend(theme_files(doc, opts, &head, &motion));
     (files, std::mem::take(&mut b.assets))
 }
 
