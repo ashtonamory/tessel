@@ -514,7 +514,7 @@ mod tests {
         assert_eq!(out[0]["id"], 1);
         assert_eq!(out[0]["result"]["protocolVersion"], "2025-06-18");
         assert_eq!(out[0]["result"]["serverInfo"]["name"], "tessel");
-        assert_eq!(out[1]["result"]["tools"].as_array().unwrap().len(), 20);
+        assert_eq!(out[1]["result"]["tools"].as_array().unwrap().len(), 21);
         assert_eq!(out[2]["result"]["isError"], true);
         let body: Value =
             serde_json::from_str(out[2]["result"]["content"][0]["text"].as_str().unwrap()).unwrap();

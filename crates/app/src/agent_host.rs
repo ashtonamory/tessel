@@ -42,6 +42,21 @@ pub enum Request {
     },
     Screenshot(ScreenshotRequest, Reply<Screenshot>),
     Export(ExportRequest, Reply<u64>),
+    Preview(Option<NodeId>, Reply<String>),
+}
+
+/// An agent's `open_preview`, answered by the app, which owns the preview.
+pub struct PreviewRequest {
+    pub target: Option<NodeId>,
+    reply: Reply<String>,
+}
+
+impl PreviewRequest {
+    pub fn respond(self, result: Result<String, String>) {
+        let _ = self
+            .reply
+            .send(result.map_err(|e| ToolError::new(ErrorCode::Internal, e)));
+    }
 }
 
 impl Request {
@@ -52,6 +67,7 @@ impl Request {
             Request::Select { reply, .. } => drop(reply.send(Err(e))),
             Request::Screenshot(_, r) => drop(r.send(Err(e))),
             Request::Export(_, r) => drop(r.send(Err(e))),
+            Request::Preview(_, r) => drop(r.send(Err(e))),
         }
     }
 }
@@ -106,6 +122,10 @@ impl AppHandle for AppLink {
     async fn export_file(&self, req: ExportRequest) -> Result<u64, ToolError> {
         self.ask(|r| Request::Export(req, r)).await
     }
+
+    async fn open_preview(&self, target: Option<NodeId>) -> Result<String, ToolError> {
+        self.ask(|r| Request::Preview(target, r)).await
+    }
 }
 
 /// A request waiting for a user gesture to end.
@@ -138,6 +158,8 @@ pub struct AgentHost {
     /// Publish on the next chance even if nothing looks changed (the
     /// document was replaced).
     force: bool,
+    /// `open_preview` calls for the app to answer this frame.
+    previews: Vec<PreviewRequest>,
     socket: Option<SocketFiles>,
     /// Why there is no socket, for the status bar.
     socket_error: Option<String>,
@@ -203,6 +225,7 @@ impl AgentHost {
             },
             revision: 0,
             force: false,
+            previews: Vec::new(),
             socket: None,
             socket_error: None,
             focused: None,
@@ -292,6 +315,11 @@ impl AgentHost {
         self.pending.len()
     }
 
+    /// `open_preview` calls waiting for the app.
+    pub fn take_previews(&mut self) -> Vec<PreviewRequest> {
+        std::mem::take(&mut self.previews)
+    }
+
     /// The window shows a different document now.
     pub fn document_replaced(&mut self) {
         self.force = true;
@@ -371,6 +399,9 @@ impl AgentHost {
             }
             Request::Export(req, reply) => {
                 let _ = reply.send(self.export(frame, ed, canvas, req));
+            }
+            Request::Preview(target, reply) => {
+                self.previews.push(PreviewRequest { target, reply });
             }
         }
     }
@@ -532,7 +563,7 @@ fn blocker(busy: &BTreeSet<NodeId>, request: &Request) -> Option<NodeId> {
             .flat_map(|c| c.touched_ids())
             .find(|id| busy.contains(id)),
         Request::Select { .. } => busy.first().cloned(),
-        Request::Screenshot(..) | Request::Export(..) => None,
+        Request::Screenshot(..) | Request::Export(..) | Request::Preview(..) => None,
     }
 }
 

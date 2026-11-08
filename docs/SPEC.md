@@ -1265,8 +1265,9 @@ multiplayer.
 
 ## 13. Proposed (v2): browser preview and motion
 
-Status: **agreed, not built.** The preview runs in a browser, links between
-screens stay out (§1), and §13.6 records the remaining decisions.
+Status: **agreed; the preview (M6) is built, motion (M7) is not.** The
+preview runs in a browser, links between screens stay out (§1), and §13.6
+records the remaining decisions.
 
 Two features that belong together:
 
@@ -1295,19 +1296,23 @@ the canvas renderer. Two reasons:
 the top-level frame that holds the selection, or the page's first frame. The
 Motion section of the inspector (§13.4) has the same button.
 
-**What runs.**
+**What runs** (`crates/preview`).
 
-- The app exports the frame as HTML + CSS, with its images, into
-  `$XDG_RUNTIME_DIR/tessel/preview/<pid>/` (inside the private directory of
-  §6.1).
-- It serves that folder over HTTP on `127.0.0.1`, on a random port, under a
-  random 128-bit path segment, so other local users cannot guess the URL.
+- The app exports the frame as HTML + CSS with its images
+  (`responsive`: the page takes the viewport's width up to the design width)
+  and keeps the files in memory. Nothing is written to disk.
+- It serves them over HTTP on `127.0.0.1`, on a port the system picks, under
+  a random 128-bit path segment, and answers only requests whose `Host` is
+  that address (so a web page cannot reach it through DNS rebinding).
   Chromium does not let pages loaded from `file://` fetch each other, so a
-  small server is needed; tokio is already a dependency.
-- It opens `chromium --app=<url>` with its own profile in the same runtime
-  directory, so the preview gets its own window that Hyprland can tile next to
-  Tessel. Without Chromium it falls back to `xdg-open <url>` (the default
-  browser, which may lack scroll-driven animations; §13.3).
+  small server is needed. It is hand-written on tokio, which is already a
+  dependency, on a thread of its own.
+- It opens `chromium --app=<url>` (or Google Chrome or Brave) with its own
+  profile in `$XDG_RUNTIME_DIR/tessel/preview-profile`, so the preview gets
+  its own window that Hyprland can tile next to Tessel. Without one of them it
+  falls back to `xdg-open <url>` (the default browser, which may lack
+  scroll-driven animations; §13.3). It does not open a second window while a
+  preview window is connected.
 
 **The preview shell.** The URL opens a small page that Tessel owns, not the
 export itself. It has:
@@ -1319,11 +1324,17 @@ export itself. It has:
   phone outline at Phone width.
 
 The export stays exactly what `export_code` returns. The shell carries
-everything preview-only.
+everything preview-only. The shell's address takes `?preset=` (`phone`,
+`tablet`, `desktop`, `frame`, `fit`) to choose the viewport, and `?live=0` to
+skip the reload stream for one-off captures such as `preview_screenshot`
+(a page with an open stream never finishes loading for a headless browser).
+The shell remembers the last preset in `localStorage`. The reduced-motion
+toggle comes with M7, when there is motion to reduce.
 
 **Live reload.** After each committed transaction, from the user or an agent,
-the app re-exports once 150 ms have passed with no further change, and tells
-the shell over a server-sent events stream. The shell reloads the iframe and
+the app re-exports 150 ms after the first change it has not shown yet (so a
+burst of edits is one export, and a long drag still updates every 150 ms), and
+tells the shell over a server-sent events stream. The shell reloads the iframe and
 restores its scroll position. Closing Tessel stops the server.
 
 **Height and scrolling.** A frame taller than the viewport scrolls, as the
@@ -1418,7 +1429,7 @@ timelines update as soon as the page scrolls, so one capture is enough.
 
 ### 13.5 Milestones
 
-- **M6: preview.** The export folder, the local server, the shell with
+- **M6: preview** (built). The in-memory export, the local server, the shell with
   viewport presets, live reload, the Chromium window and its `xdg-open`
   fallback, the `open_preview` tool. No document change.
 - **M7: motion.** The `motion` field, the CSS export,

@@ -25,6 +25,7 @@ pub mod pages;
 pub mod panels;
 pub mod pickers;
 pub mod place;
+pub mod preview_window;
 pub mod snap;
 pub mod structure;
 pub mod styles_panel;

@@ -126,6 +126,22 @@ pub trait AppHandle: Send + Sync + 'static {
         req: ExportRequest,
     ) -> impl Future<Output = Result<u64, ToolError>> + Send;
 
+    /// Show `target`'s top-level frame (default: the one holding the
+    /// selection, else the current page's first) in the preview (§13.2) and
+    /// return the preview's URL. The app also opens a browser window.
+    fn open_preview(
+        &self,
+        target: Option<NodeId>,
+    ) -> impl Future<Output = Result<String, ToolError>> + Send {
+        let _ = target;
+        async {
+            Err(ToolError::new(
+                crate::ErrorCode::Internal,
+                "this Tessel cannot open a preview",
+            ))
+        }
+    }
+
     /// Whether this handle works on files by path and offers the document
     /// tools (`list_documents`, `open_document`, `new_document`,
     /// `import_image`): headless mode does (§6.7); the app, with its one open

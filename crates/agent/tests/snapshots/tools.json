@@ -857,6 +857,29 @@
     "annotations": {
       "readOnlyHint": true
     },
+    "description": "Show a frame as a web page in the user's preview window (its HTML + CSS export in a browser, reloaded after every edit) and return its URL. Use it to show the user a design at real phone, tablet and desktop widths.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": null,
+          "description": "A layer to preview; its top-level frame is shown. Default: the frame\nholding the user's selection, else the current page's first frame.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "title": "OpenPreviewArgs",
+      "type": "object"
+    },
+    "name": "open_preview"
+  },
+  {
+    "annotations": {
+      "readOnlyHint": true
+    },
     "description": "Export a node as HTML + CSS, Tailwind or React code. Returns the files (`path`, `language`, `content`; image files are base64 with `encoding: \"base64\"`). Nothing is written to disk.",
     "inputSchema": {
       "$defs": {

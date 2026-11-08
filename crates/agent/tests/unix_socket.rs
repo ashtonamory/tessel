@@ -19,7 +19,7 @@ async fn session_over_a_unix_stream_pair() {
     let mut c = Client::new(client);
     c.initialize("claude-code").await;
     let tools = c.result("tools/list", json!({})).await;
-    assert_eq!(tools["tools"].as_array().unwrap().len(), 20);
+    assert_eq!(tools["tools"].as_array().unwrap().len(), 21);
 
     let r = c
         .ok(

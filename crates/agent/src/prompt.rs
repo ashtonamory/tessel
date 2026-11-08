@@ -29,6 +29,7 @@ Working
 - Read before you write: get_document for the overview, get_node for exact props, find_nodes to search.
 - Build a whole section in one create_node call with nested "children"; the result maps each name path ("Card/Title") to its new ID.
 - After edits, call screenshot on the frame you changed and check your work visually.
+- To show the user a web page or app screen as it will look in a browser, call open_preview; it opens a window that reloads after each of your edits.
 - Each tool call is one undo step for the user (labelled "Agent: …"). The user can undo anything you do, and owns the undo stack: to revert, make the inverse edit. You cannot save; get_document reports "dirty".
 - Pass if_revision (from the last result) to make an edit fail with stale_revision if the user changed the document meanwhile.
 - Nodes the user has locked are read-only to you (error code "locked"). Errors are JSON: { "code", "message", "node_id"? }.

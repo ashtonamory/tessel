@@ -85,6 +85,7 @@ async fn tools_list_has_every_m4_tool_with_object_schemas() {
             "create_instance",
             "set_selection",
             "screenshot",
+            "open_preview",
             "export_code",
             "export_file",
         ]
@@ -1221,4 +1222,12 @@ async fn export_code_draws_instances_with_their_overrides() {
         "invalid_args",
     )
     .await;
+}
+
+#[tokio::test]
+async fn open_preview_checks_the_layer_and_reports_an_app_without_preview() {
+    let (_agent, mut c) = start(FakeApp::new(fixture(), None), "t").await;
+    c.err("open_preview", json!({ "id": "n_zzzzzzzzzz" }), "not_found")
+        .await;
+    c.err("open_preview", json!({}), "internal").await;
 }

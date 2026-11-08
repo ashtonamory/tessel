@@ -53,6 +53,16 @@ pub struct Workspace {
     /// Made on the first render; `Err` is kept so a missing GPU is reported, not retried.
     gpu: Mutex<Option<Result<Gpu, String>>>,
     notifier: OnceLock<Notifier>,
+    /// The preview server once `open_preview` started it (§13.2).
+    preview: Mutex<Option<HeadlessPreview>>,
+}
+
+/// The preview in headless mode: no window, just the server and its URL.
+struct HeadlessPreview {
+    server: preview::Server,
+    frame: NodeId,
+    /// The revision, file and frame last published.
+    shown: Option<(u64, Option<PathBuf>, NodeId)>,
 }
 
 thread_local! {
@@ -95,6 +105,7 @@ impl Workspace {
             published: Mutex::new(Arc::new(snapshot_of(&state))),
             state: Mutex::new(state),
             gpu: Mutex::new(None),
+            preview: Mutex::new(None),
             notifier: OnceLock::new(),
         };
         Ok(ws)
@@ -127,7 +138,13 @@ impl Workspace {
     }
 
     fn publish(&self, s: &State) {
-        *self.published.lock().unwrap() = Arc::new(snapshot_of(s));
+        let snap = Arc::new(snapshot_of(s));
+        *self.published.lock().unwrap() = snap.clone();
+        if let Some(p) = self.preview.lock().unwrap().as_mut() {
+            if let Err(e) = publish_preview(p, &snap) {
+                log::warn!("preview: {e}");
+            }
+        }
     }
 
     fn changed(&self) {
@@ -549,6 +566,36 @@ fn no_document() -> ToolError {
     ToolError::invalid_args("no document is open: call open_document or new_document first")
 }
 
+/// Re-export the preview's frame if the document or frame changed. A
+/// deleted frame, or another document, moves it to the first frame.
+fn publish_preview(p: &mut HeadlessPreview, snap: &Snapshot) -> Result<(), String> {
+    let doc = &snap.document;
+    if doc.node_or_master(&p.frame).is_none() {
+        let page = doc.pages.first().ok_or("the document has no pages")?;
+        p.frame = preview::pick_frame(doc, page, &snap.selection.ids)
+            .ok_or("the page has nothing to preview")?;
+    }
+    let key = (snap.revision, snap.path.clone(), p.frame.clone());
+    if p.shown.as_ref() == Some(&key) {
+        return Ok(());
+    }
+    let file = snap.path.as_deref().and_then(Path::file_name).map_or_else(
+        || "design".to_string(),
+        |n| n.to_string_lossy().into_owned(),
+    );
+    let page = preview::export_page(
+        doc,
+        &snap.geometry,
+        &snap.assets,
+        &p.frame,
+        &file,
+        snap.revision,
+    )?;
+    p.server.publish(page);
+    p.shown = Some(key);
+    Ok(())
+}
+
 fn snapshot_of(s: &State) -> Snapshot {
     Snapshot {
         document: s.doc.clone(),
@@ -615,6 +662,38 @@ impl AppHandle for Workspace {
         s.selection = ids.clone();
         self.publish(&s);
         Ok(ids)
+    }
+
+    async fn open_preview(&self, target: Option<NodeId>) -> Result<String, ToolError> {
+        let snap = self.snapshot();
+        if snap.path.is_none() {
+            return Err(no_document());
+        }
+        let doc = &snap.document;
+        let frame = match &target {
+            Some(id) => preview::top_level_of(doc, id).unwrap_or_else(|| id.clone()),
+            None => doc
+                .pages
+                .first()
+                .and_then(|page| preview::pick_frame(doc, page, &snap.selection.ids))
+                .ok_or_else(|| ToolError::invalid_args("the document has nothing to preview"))?,
+        };
+        let internal = |e: String| ToolError::new(agent::ErrorCode::Internal, e);
+        let mut slot = self.preview.lock().unwrap();
+        if slot.is_none() {
+            let server =
+                preview::Server::start().map_err(|e| internal(format!("preview server: {e}")))?;
+            *slot = Some(HeadlessPreview {
+                server,
+                frame: frame.clone(),
+                shown: None,
+            });
+        }
+        let p = slot.as_mut().expect("just set");
+        p.frame = frame;
+        p.shown = None;
+        publish_preview(p, &snap).map_err(internal)?;
+        Ok(p.server.url().to_string())
     }
 
     async fn screenshot(&self, req: ScreenshotRequest) -> Result<Screenshot, ToolError> {

@@ -425,3 +425,66 @@ fn walk(dir: &Path) -> Vec<PathBuf> {
     }
     out
 }
+
+/// GET `url` from the preview server: (status line and headers, body).
+fn http_get(url: &str) -> (String, String) {
+    use std::io::{Read, Write};
+    let rest = url.strip_prefix("http://").unwrap();
+    let (host, path) = rest.split_once('/').unwrap();
+    let mut s = std::net::TcpStream::connect(host).unwrap();
+    write!(s, "GET /{path} HTTP/1.1\r\nHost: {host}\r\n\r\n").unwrap();
+    let mut out = String::new();
+    s.read_to_string(&mut out).unwrap();
+    let (head, body) = out.split_once("\r\n\r\n").unwrap();
+    (head.to_string(), body.to_string())
+}
+
+#[tokio::test]
+async fn open_preview_serves_the_frame_and_follows_edits() {
+    let root = temp_dir("preview");
+    let ws = Workspace::new(&root, &[]).unwrap();
+    let none = call(&ws, "open_preview", json!({})).await;
+    assert!(none.is_err(), "nothing is open yet");
+
+    let made = call(
+        &ws,
+        "new_document",
+        json!({ "path": "site.tessel.json", "width": 1440, "height": 900 }),
+    )
+    .await
+    .unwrap();
+    let frame = made["pages"][0]["children"][0]["id"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    let url = call(&ws, "open_preview", json!({})).await.unwrap()["url"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    assert!(url.starts_with("http://127.0.0.1:"), "{url}");
+
+    let state: Value = serde_json::from_str(&http_get(&format!("{url}state")).1).unwrap();
+    assert_eq!(state["title"], "Design");
+    assert_eq!(state["width"], 1440.0);
+    let generation = state["generation"].as_u64().unwrap();
+    let (head, html) = http_get(&format!("{url}page/index.html"));
+    assert!(head.contains("text/html"), "{head}");
+    assert!(html.starts_with("<!doctype html>"));
+
+    call(&ws, "create_node", json!({ "parent_id": frame, "node": { "kind": "text", "name": "Headline", "content": "Hello from the preview" } }))
+        .await
+        .unwrap();
+    let state: Value = serde_json::from_str(&http_get(&format!("{url}state")).1).unwrap();
+    assert!(
+        state["generation"].as_u64().unwrap() > generation,
+        "the edit was published"
+    );
+    let (_, html) = http_get(&format!("{url}page/index.html"));
+    assert!(html.contains("Hello from the preview"), "{html}");
+
+    // Asking again keeps the same server.
+    let again = call(&ws, "open_preview", json!({ "id": frame }))
+        .await
+        .unwrap();
+    assert_eq!(again["url"], url);
+}

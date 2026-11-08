@@ -13,6 +13,7 @@ layout.workspace = true
 render.workspace = true
 export.workspace = true
 agent.workspace = true
+preview.workspace = true
 wgpu.workspace = true
 pollster.workspace = true
 image.workspace = true
