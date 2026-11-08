@@ -53,7 +53,9 @@ Stack (decided):
 - Multiplayer, real-time collaboration between humans, or any server/cloud.
   (One user plus agents connected to their local app is the only "multi" case.)
 - A plugin system or scripting API beyond MCP.
-- Prototyping: links between frames, transitions, interactive states.
+- Prototyping: links between frames, transitions between screens, interactive
+  states. (Motion within one page, and a browser preview, are proposed for v2
+  in §13; links between screens stay out.)
 - Boolean operations on vectors, a full pen tool with path editing beyond
   basic point editing, and vector networks.
 - Importing files from other design tools.
@@ -1217,7 +1219,8 @@ engine's geometry (the opt-in `scripts/code-parity.sh`, §11).
 
 ### After v1 (candidates, not committed)
 
-Rich text spans, boolean ops, a pen tool, prototyping links, variables/modes
+Browser preview and motion (proposed in §13, M6–M7). Rich text spans, boolean
+ops, a pen tool, prototyping links, variables/modes
 (light/dark token sets), HTTP MCP transport, import from other design tools, plugins,
 multiplayer.
 
@@ -1257,3 +1260,181 @@ multiplayer.
    sentence)? Currently after v1.
 5. Do we want a project-level tokens file shared by several design files?
    Currently tokens are per document.
+
+---
+
+## 13. Proposed (v2): browser preview and motion
+
+Status: **agreed, not built.** The preview runs in a browser, links between
+screens stay out (§1), and §13.6 records the remaining decisions.
+
+Two features that belong together:
+
+- **Preview**: see a frame as a real page at a real viewport size, scrolling
+  like a browser, at phone, tablet and desktop widths.
+- **Motion**: a few named effects on a layer (parallax, scroll reveal, hover,
+  loop), so a design (and the agent working on it) can show how the page moves,
+  not only how it looks.
+
+### 13.1 Principle: the preview is the export
+
+The preview shows the HTML + CSS export (§8) in Chromium. It is not drawn by
+the canvas renderer. Two reasons:
+
+1. **What you see is what gets built.** The agent builds from the export. A
+   preview drawn another way could disagree with it, and nothing would notice.
+   A difference between the canvas and the preview is an export bug, which the
+   code parity check (§11) is there to catch.
+2. **Motion has one implementation.** Every effect in §13.3 is a CSS feature.
+   Tessel writes the CSS; the browser runs it. The canvas never animates, so
+   no effect is implemented twice.
+
+### 13.2 Preview
+
+**Opening it.** View > Preview (`Ctrl+Shift+P`, since `Ctrl+P` usually means print) previews
+the top-level frame that holds the selection, or the page's first frame. The
+Motion section of the inspector (§13.4) has the same button.
+
+**What runs.**
+
+- The app exports the frame as HTML + CSS, with its images, into
+  `$XDG_RUNTIME_DIR/tessel/preview/<pid>/` (inside the private directory of
+  §6.1).
+- It serves that folder over HTTP on `127.0.0.1`, on a random port, under a
+  random 128-bit path segment, so other local users cannot guess the URL.
+  Chromium does not let pages loaded from `file://` fetch each other, so a
+  small server is needed; tokio is already a dependency.
+- It opens `chromium --app=<url>` with its own profile in the same runtime
+  directory, so the preview gets its own window that Hyprland can tile next to
+  Tessel. Without Chromium it falls back to `xdg-open <url>` (the default
+  browser, which may lack scroll-driven animations; §13.3).
+
+**The preview shell.** The URL opens a small page that Tessel owns, not the
+export itself. It has:
+
+- a toolbar with the viewport presets **Phone 393**, **Tablet 834**,
+  **Desktop 1440**, **Frame width** (the default) and **Fit window**, plus
+  "Reduced motion" (emulates `prefers-reduced-motion`);
+- an `<iframe>` at the chosen width holding the unmodified export, with a
+  phone outline at Phone width.
+
+The export stays exactly what `export_code` returns. The shell carries
+everything preview-only.
+
+**Live reload.** After each committed transaction, from the user or an agent,
+the app re-exports once 150 ms have passed with no further change, and tells
+the shell over a server-sent events stream. The shell reloads the iframe and
+restores its scroll position. Closing Tessel stops the server.
+
+**Height and scrolling.** A frame taller than the viewport scrolls, as the
+page will. A frame with `clip: false` that is shorter than the viewport ends
+where the frame ends, as the exported page does.
+
+### 13.3 Motion in the document
+
+Each node gets an optional list of effects. There is at most one of each
+kind per node, and none on `group`, because groups are flattened in export
+(§3.4).
+
+```rust
+pub struct Node {
+    // … §3.4 …
+    pub motion: Vec<Motion>,            // default empty; omitted from the file when empty
+}
+
+pub enum Motion {
+    /// Moves at `speed` times the scroll speed while the node is in view.
+    /// 1 = with the page (no effect), 0.5 = half speed (feels further away),
+    /// 0 = stays put, above 1 = faster (feels closer). Range -1..=2.
+    Parallax { speed: f32 },
+    /// Plays as the node scrolls into view (scroll-linked, not on a timer).
+    Reveal { effect: RevealEffect, distance: f32 /* px, default 24 */ },
+    /// Applies while the pointer is over the node (and on keyboard focus for
+    /// `semantic` button/a).
+    Hover { scale: f32 /* default 1 */, lift: f32 /* px up, default 0 */,
+            opacity: Option<f32>, fill: Option<ColorRef>, duration_ms: u32 /* default 150 */ },
+    /// Repeats forever.
+    Loop { effect: LoopEffect, amount: f32, duration_ms: u32 /* default 2000 */ },
+}
+
+pub enum RevealEffect { Fade, SlideUp, SlideDown, SlideLeft, SlideRight, Scale }
+pub enum LoopEffect { Float /* amount = px */, Pulse /* amount = scale */, Spin /* amount = turns */ }
+```
+
+In the file, `"motion": [{ "parallax": { "speed": 0.5 } }]`. `format.version`
+stays 1. The file reader keeps a node's unknown keys and writes them back
+(`node_serde`), so an older app opens a file with motion, does not show the
+effects, and saves them unchanged.
+
+**Export (HTML + CSS).** Motion needs no JavaScript:
+
+| Effect | CSS |
+| ------ | --- |
+| `parallax` | `animation-timeline: view()`, `animation-range: cover`, keyframes on the `translate` property from `-X` to `X`, where `X = (1 - speed) * (100vh + height) / 2` |
+| `reveal` | `animation-timeline: view()`, `animation-range: entry`, keyframes from the offset or faded state to the design |
+| `hover` | `transition` on the changed properties, plus `:hover` (and `:focus-visible`) rules |
+| `loop` | `@keyframes` with `animation: … infinite alternate` (`spin` is not alternated) |
+
+- Effects animate the individual `translate`, `scale` and `opacity`
+  properties, never `transform`, so they combine with a node's rotation. When
+  two effects on one node animate the same property (`parallax` and a hover
+  `lift`), the exporter wraps the element in one extra `<div>`, and only then.
+- All scroll-linked rules sit inside `@supports (animation-timeline: view())`.
+  A browser without scroll-driven animations shows the static design, which
+  is the design.
+- Inside `@media (prefers-reduced-motion: reduce)`, effects are off and reveals
+  show their final state.
+- **Tailwind and React exports:** Tailwind has no utilities for scroll
+  timelines, so these exports emit the same rules into a `motion.css` imported
+  by the page, and the elements carry their class names.
+- Motion is exported as written. It adds no behaviour of its own, as §8 says
+  for all exports.
+
+**Canvas.** The canvas shows the design at rest: no effect plays, and
+reveals show their final state. A layer with motion gets a small motion mark
+in the layers panel. When selected, its effects are listed on a tag above the
+selection box.
+
+### 13.4 Inspector and agent
+
+**Inspector.** A Motion section with an "Add effect" menu (one entry per kind
+not yet on the node), the fields of each effect, a remove button, and Preview
+(§13.2).
+
+**MCP.** `motion` is an ordinary node field: `create_node`, `update_node` and
+`update_nodes` set it, and the tool schemas and the `design_conventions`
+prompt describe it. Two tools are added, in the app and in headless mode
+(§6.7):
+
+| Tool | Arguments | Returns |
+| ---- | --------- | ------- |
+| `open_preview` | `{ id?: Id }` | `{ url }`. Opens the preview window for the user (app only; headless returns the URL of a one-off export). |
+| `preview_screenshot` | `{ id: Id, viewport?: [w, h] = [frame width, 900], scroll?: number = 0, reduced_motion?: bool = false }` | MCP image. The exported page in headless Chromium at that viewport, scrolled down `scroll` px, so an agent can check a parallax effect or a reveal part-way through. Fails with `no_browser` and advice when Chromium is missing. |
+
+`preview_screenshot` loads the shell with `?w=&h=&scroll=&reduced=`, so the
+shell sizes the iframe and scrolls it before the screenshot is taken. Scroll
+timelines update as soon as the page scrolls, so one capture is enough.
+`screenshot` (§6.3) stays the canvas renderer and shows the design at rest.
+
+### 13.5 Milestones
+
+- **M6: preview.** The export folder, the local server, the shell with
+  viewport presets, live reload, the Chromium window and its `xdg-open`
+  fallback, the `open_preview` tool. No document change.
+- **M7: motion.** The `motion` field, the CSS export,
+  the inspector section, canvas marks, `preview_screenshot`, and golden tests
+  for the motion CSS. The opt-in parity script gains motion checks: scroll
+  headless Chromium to set positions and compare element boxes with the
+  expected offsets.
+
+### 13.6 Decisions
+
+1. **Reveals are scroll-linked.** They play as the node scrolls into view and
+   run backwards if you scroll back up. Reveals that play once on a timer
+   (which need JavaScript or CSS scroll-triggered animations) are out of v2.
+2. **No Firefox fallback.** Browsers without scroll-driven animations,
+   Firefox among them for now, show the static design. The export adds no
+   JavaScript for them.
+3. **Viewport presets are fixed** (Phone 393, Tablet 834, Desktop 1440, Frame
+   width, Fit window). They do not come from the document, and responsive
+   breakpoints are not part of this proposal.
