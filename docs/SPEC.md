@@ -1265,8 +1265,8 @@ multiplayer.
 
 ## 13. Proposed (v2): browser preview and motion
 
-Status: **proposed, not built.** Agreed so far: the preview runs in a browser,
-and links between screens stay out (§1). The rest is open for review.
+Status: **agreed, not built.** The preview runs in a browser, links between
+screens stay out (§1), and §13.6 records the remaining decisions.
 
 Two features that belong together:
 
@@ -1427,14 +1427,14 @@ timelines update as soon as the page scrolls, so one capture is enough.
   headless Chromium to set positions and compare element boxes with the
   expected offsets.
 
-### 13.6 Open questions
+### 13.6 Decisions
 
-1. Reveals are scroll-linked: they play as you scroll and run backwards if
-   you scroll back up. A reveal that plays once on a timer needs either JavaScript
-   (an IntersectionObserver) or CSS scroll-triggered animations, which are
-   not yet in every browser. Is scroll-linked enough for v2?
-2. Firefox has no scroll-driven animations by default yet. Its users see the
-   static design (§13.3). Is that acceptable, or should the export add a small
-   optional JavaScript fallback?
-3. Should the preview's viewport presets be the document's own breakpoints?
-   Responsive frames (a design per width) are not in the model yet.
+1. **Reveals are scroll-linked.** They play as the node scrolls into view and
+   run backwards if you scroll back up. Reveals that play once on a timer
+   (which need JavaScript or CSS scroll-triggered animations) are out of v2.
+2. **No Firefox fallback.** Browsers without scroll-driven animations,
+   Firefox among them for now, show the static design. The export adds no
+   JavaScript for them.
+3. **Viewport presets are fixed** (Phone 393, Tablet 834, Desktop 1440, Frame
+   width, Fit window). They do not come from the document, and responsive
+   breakpoints are not part of this proposal.
