@@ -351,6 +351,8 @@ fn export_file_writes_svg_inside_the_document_folder_only() {
     let _ = std::fs::remove_dir_all(dir);
 }
 
+// Symlinks and unix permissions: not run where there are none yet (Windows).
+#[cfg(unix)]
 #[test]
 fn the_window_listens_on_a_private_socket_and_cleans_up() {
     use std::os::unix::fs::PermissionsExt;

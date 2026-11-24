@@ -176,6 +176,8 @@ mod tests {
         d
     }
 
+    // The folders are Linux's (XDG, then HOME); Windows' own are not chosen yet.
+    #[cfg(unix)]
     #[test]
     fn recovery_dir_follows_xdg_then_home() {
         let d = |x: Option<&str>, h: Option<&str>| {

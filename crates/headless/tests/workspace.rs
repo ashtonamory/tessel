@@ -144,6 +144,8 @@ async fn open_document_switches_files_and_stale_revisions_fail() {
     );
 }
 
+// Symlinks and unix permissions: not run where there are none yet (Windows).
+#[cfg(unix)]
 #[tokio::test]
 async fn stays_inside_its_folder() {
     let root = temp_dir("inside");

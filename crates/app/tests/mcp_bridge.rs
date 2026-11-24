@@ -1,6 +1,9 @@
 //! `tessel mcp`, the real binary, between a client on its stdio
 //! and a headless window's socket (§6.1).
 
+// The bridge is a unix socket: not there on Windows yet.
+#![cfg(unix)]
+
 mod common;
 
 use std::io::{BufRead, BufReader, Write};

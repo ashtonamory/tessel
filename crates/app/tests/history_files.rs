@@ -454,6 +454,8 @@ fn undo_after_a_save_is_unsaved_again_and_restores_the_earlier_state() {
     assert_eq!(ed.doc, saved);
 }
 
+// Symlinks and unix permissions: not run where there are none yet (Windows).
+#[cfg(unix)]
 #[test]
 fn asset_reads_reject_symlinks_oversized_files_and_unreferenced_names() {
     use doc::assets::MAX_ASSET_BYTES;

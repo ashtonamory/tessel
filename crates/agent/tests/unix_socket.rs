@@ -1,6 +1,8 @@
 //! The same protocol over real unix sockets: a `UnixStream` pair, and the
 //! listener the app binds (§6.1).
 
+#![cfg(unix)]
+
 mod common;
 
 use agent::Agent;
