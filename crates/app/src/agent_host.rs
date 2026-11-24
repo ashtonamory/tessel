@@ -250,6 +250,16 @@ impl AgentHost {
         Ok(host)
     }
 
+    #[cfg(not(unix))]
+    fn listen(
+        &self,
+        _runtime: &tokio::runtime::Runtime,
+        dir: &Path,
+    ) -> std::io::Result<SocketFiles> {
+        SocketFiles::bind(dir, std::process::id())
+    }
+
+    #[cfg(unix)]
     fn listen(
         &self,
         runtime: &tokio::runtime::Runtime,

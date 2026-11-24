@@ -394,6 +394,7 @@ fn resolve_existing_prefix(path: &Path) -> Option<PathBuf> {
 mod tests {
     use super::*;
 
+    #[cfg(unix)]
     use std::os::unix::fs::symlink;
 
     /// A fresh `<temp>/god-agent-<name>-<pid>` with `docs`, `home` and
@@ -417,6 +418,8 @@ mod tests {
         e.message
     }
 
+    // Symlinks and unix permissions: not run where there are none yet (Windows).
+    #[cfg(unix)]
     #[test]
     fn export_paths_stay_inside_the_document_dir_or_home() {
         let (root, docs, home, other) = temp_root("paths");
@@ -482,6 +485,8 @@ mod tests {
         let _ = std::fs::remove_dir_all(&root);
     }
 
+    // Symlinks and unix permissions: not run where there are none yet (Windows).
+    #[cfg(unix)]
     #[test]
     fn hidden_folders_are_refused() {
         let (root, docs, home, _) = temp_root("hidden");
@@ -536,6 +541,8 @@ mod tests {
         let _ = std::fs::remove_dir_all(&root);
     }
 
+    // Symlinks and unix permissions: not run where there are none yet (Windows).
+    #[cfg(unix)]
     #[test]
     fn a_symlink_at_the_file_is_never_followed() {
         let (root, docs, home, other) = temp_root("symlink");
@@ -577,6 +584,8 @@ mod tests {
         let _ = std::fs::remove_dir_all(&root);
     }
 
+    // Symlinks and unix permissions: not run where there are none yet (Windows).
+    #[cfg(unix)]
     #[test]
     fn writes_go_through_a_temp_file_and_rename() {
         let (root, docs, home, other) = temp_root("write");

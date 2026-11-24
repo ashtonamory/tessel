@@ -203,6 +203,7 @@ impl<H: AppHandle> Agent<H> {
     }
 
     /// Accept connections on a unix socket forever, one session each.
+    #[cfg(unix)]
     pub async fn serve_unix(&self, listener: tokio::net::UnixListener) -> std::io::Result<()> {
         loop {
             let (stream, _) = listener.accept().await?;

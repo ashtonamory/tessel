@@ -3,6 +3,12 @@
 
 pub mod activity;
 pub mod agent_host;
+// The link between a window and `tessel mcp` is a unix socket. Windows has
+// no such link yet: a stand-in there says so, and the window runs without it.
+#[cfg(unix)]
+pub mod agent_socket;
+#[cfg(not(unix))]
+#[path = "agent_socket_other.rs"]
 pub mod agent_socket;
 pub mod app;
 pub mod auto_layout;
@@ -20,6 +26,10 @@ pub mod instance_inspector;
 pub mod layers;
 pub mod layout_handles;
 pub mod master_edit;
+#[cfg(unix)]
+pub mod mcp_bridge;
+#[cfg(not(unix))]
+#[path = "mcp_bridge_other.rs"]
 pub mod mcp_bridge;
 pub mod pages;
 pub mod panels;
