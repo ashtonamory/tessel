@@ -47,3 +47,14 @@ tokio = { version = "1.53.2", features = ["rt", "rt-multi-thread", "macros", "io
 tokio-util = "0.7"
 schemars = "1.2.2"
 base64 = "0.23"
+
+# Debug builds keep line numbers, enough for backtraces and panics to name a
+# file and line, but not full debug info: with wgpu and naga linked into every
+# test binary, full info made each one about 600 MB, over 80% of it debug
+# sections, and target/ reached 60 GB. Dependencies get none. Turn `debug`
+# back to `true` locally when stepping through in a debugger.
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+debug = false
